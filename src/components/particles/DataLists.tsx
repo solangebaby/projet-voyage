@@ -4,11 +4,11 @@ export const NavLinks = [
         url: "/"
     },
     {
-        name: "Hotels",
+        name: "Bus",
         url: "/"
     },
     {
-        name: "Flights",
+        name: "Travels",
         url: "/"
     },
     {
@@ -32,11 +32,11 @@ export const NavButtons = [
 
 
 export const HeroTexts = {
-    firstText: "BEST DESITNATIONS AROUND THE WORLD",
-    secondText: "Travel, enjoy and live a new and full life.",
-    thirdText: "Built Wicket longer admire do barton vantity itself do in it. Preferred to sportsmen it engrossed listening. Park gate sell they west hard for the.",
-    firstButton: "Find out more",
-    secondButton: 'Play Demo'
+    firstText: "BEST DESITNATIONS AROUND THE COUNTRY",
+    secondText: "Travel with peace of mind.",
+    thirdText: "Trust KCTRIP you won't be disappointed.",
+    // firstButton: "Find out more",
+    // secondButton: 'Play Demo'
 }
 
 

@@ -1,0 +1,123 @@
+{
+  "reservations": [
+    {
+      "id": "1",
+      "voyageurId": 1,
+      "date": "2025-10-01T10:00:00Z",
+      "statut": "confirmer"
+    },
+    {
+      "id": "5402",
+      "ticketId": 2,
+      "time": "09:30",
+      "price": 40,
+      "date": "2025-10-05",
+      "name": "solange",
+      "email": "solangebby@gmail.com",
+      "phone": "654061800",
+      "status": "paid"
+    }
+  ],
+  "voyageurs": [
+    {
+      "id": "1",
+      "nom": "Doe",
+      "prenom": "John",
+      "cni": "123456789",
+      "genre": "M",
+      "civilite": "Mr"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "1",
+      "departure": "Yaoundé",
+      "destination": "Douala",
+      "price": 5000,
+      "time": "08:00"
+    },
+    {
+      "id": "2",
+      "departure": "Yaoundé",
+      "destination": "Bafoussam",
+      "price": 7000,
+      "time": "09:30"
+    }
+  ],
+  "trajets": [
+    {
+      "id": "1",
+      "villeDepart": "Douala",
+      "villeArrivee": "Yaoundé",
+      "dateDepart": "2025-10-03",
+      "dateArrivee": "2025-10-03",
+      "km": 300
+    },
+    {
+      "id": "2",
+      "villeDepart": "Douala",
+      "villeArrivee": "Bafoussam",
+      "dateDepart": "2025-10-03",
+      "dateArrivee": "2025-10-03",
+      "km": 200
+    },
+    {
+      "id": "3",
+      "villeDepart": "Yaoundé",
+      "villeArrivee": "Bafoussam",
+      "dateDepart": "2025-10-04",
+      "dateArrivee": "2025-10-04",
+      "km": 250
+    }
+  ],
+  "voyages": [
+    {
+      "id": "1",
+      "date": "2025-10-03",
+      "trajetId": 1,
+      "voyageurIds": [
+        1
+      ],
+      "ticketIds": [
+        1,
+        2
+      ],
+      "busId": 1
+    }
+  ],
+  "paiement": [
+    {
+      "id": "1",
+      "reservationId": 1,
+      "datePaiement": "2025-10-01T10:05:00Z",
+      "type": "Momo"
+    }
+  ],
+  "Commentaires": [
+    {
+      "id": "1",
+      "contenu": "Super voyage, je recommande !"
+    },
+    {
+      "id": "2",
+      "contenu": "Le bus était confortable et le personnel sympa."
+    }
+  ],
+  "bus": [
+    {
+      "id": "1",
+      "matricule": "BUS123",
+      "nombreSieges": 40
+    },
+    {
+      "id": "2",
+      "matricule": "BUS456",
+      "nombreSieges": 30
+    },
+    {
+      "id": "3",
+      "matricule": "BUS789",
+      "nombreSieges": 35
+    }
+  ]
+}

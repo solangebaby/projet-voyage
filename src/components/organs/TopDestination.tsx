@@ -3,12 +3,12 @@ import { Text } from "../atoms/Text"
 import { TopDestinationTexts } from "../particles/DataLists"
 import Slider from "react-slick";
 import { Card } from "../molecules/Card";
-import City1 from "../../assets/gallery1.jpeg"
-import City2 from "../../assets/gallery2.jpeg"
-import City3 from "../../assets/gallery3.jpeg"
-import City4 from "../../assets/gallery4.jpeg"
-import City5 from "../../assets/gallery5.jpeg"
-import City6 from "../../assets/gallery6.jpeg"
+import City1 from "../../assets/paysage.jpg"
+import City2 from "../../assets/paysge2.jpg"
+import City3 from "../../assets/paysage.jpg"
+import City4 from "../../assets/paysge2.jpg"
+import City5 from "../../assets/paysage.jpg"
+import City6 from "../../assets/paysge2.jpg"
 import { Button } from "../atoms/Button";
 import { AirplaneTilt, CaretLeft, CaretRight } from "@phosphor-icons/react";
 
