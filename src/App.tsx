@@ -6,9 +6,9 @@ import "slick-carousel/slick/slick-theme.css";
 import { animateScroll } from "react-scroll";
 import Home from "./components/pages/Home";
 import { useEffect } from "react";
-
 import Ticketdispo from "./components/pages/Ticketpage";
-import Payment from "./components/pages/Payment";
+import Confimation from "./components/pages/Confirmationpage";
+import Paiementdispo from "./components/pages/PaiementPage";
 
 
 
@@ -26,7 +26,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />  
         {<Route path="/ticket-details" element={<Ticketdispo/>} /> }
-        {<Route path="/payment" element={<Payment/>} /> }
+        {<Route path="/confirmation" element={<Confimation/>} /> }
+         {<Route path="/pay" element={<Paiementdispo/>} /> }
       </Routes>
      
       

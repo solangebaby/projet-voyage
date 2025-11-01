@@ -1,11 +1,12 @@
 import Footer from "../organs/Footer"
 import NavBar from "../organs/NavBar"
-
-import TicketDetails from "./Tickets"
-
+import Confirmation from "./Confirmation"
 
 
-const  Ticketdispo = () => {
+
+
+
+const  Confimation = () => {
     return (
         <>
        <div>
@@ -14,7 +15,7 @@ const  Ticketdispo = () => {
 
       {/* Contenu principal */}
       <div >
-        <TicketDetails />
+        <Confirmation />
       </div>
 
       {/* Footer en bas */}
@@ -30,4 +31,4 @@ const  Ticketdispo = () => {
     )
 }
 
-export default Ticketdispo
+export default Confimation

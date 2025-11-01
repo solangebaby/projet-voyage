@@ -1,114 +1,156 @@
 // src/pages/Payment.tsx
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { useState } from "react";
 import { Button } from "../atoms/Button";
+import { Text } from "../atoms/Text";
+import { Fade } from "react-awesome-reveal";
+import { 
+  Phone, 
+  Money, 
+  ArrowLeft, 
+  CheckCircle, 
+  WarningCircle
+} from "@phosphor-icons/react";
+import toast from "react-hot-toast";
 
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { 
+    departure,
+    destination,
+    date,
+    departureTime,
+    arrivalTime,
+    ticket,
+    passengerInfo,
+    selectedSeat
+  } = location.state || {};
 
-  // Récupérer le ticket sélectionné et la date depuis la navigation
-  const state = location.state as { ticket: any; departure: string; destination: string; date: string } | undefined;
+  const [paymentMethod, setPaymentMethod] = useState<string>("MTN");
 
-  // Redirection si aucun ticket sélectionné
-  useEffect(() => {
-    if (!state || !state.ticket) {
-      navigate("paiement", { replace: true });
-    }
-  }, [state, navigate]);
+  const handlePayment = () => {
+    toast.loading("Processing payment...");
 
-  if (!state || !state.ticket) {
+    // ✅ Simulated call to NotPay API
+    setTimeout(() => {
+      toast.dismiss();
+      toast.success("Payment successful!");
+
+      navigate("/ticket", {
+        state: {
+          ticket,
+          departure,
+          destination,
+          date,
+          departureTime,
+          arrivalTime,
+          passengerInfo,
+          selectedSeat,
+          transactionId: "NOTPAY-" + Math.floor(Math.random() * 999999)
+        },
+      });
+    }, 2000);
+  };
+
+  const handleCancelRefund = () => {
+    toast.loading("Processing refund...");
+
+    setTimeout(() => {
+      toast.dismiss();
+      toast.success("Refund completed! ✅ Money returned to wallet");
+      navigate("/");
+    }, 2000);
+  };
+
+  if (!ticket) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500">Aucun ticket sélectionné. Redirection...</p>
+      <div className="min-h-screen flex items-center justify-center mt-24">
+        <Text as="p" className="text-red-600 font-bold">No reservation found</Text>
       </div>
     );
   }
 
-  const { ticket, departure, destination, date } = state;
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-
-  const handlePayment = () => {
-    if (!name || !email || !phone) {
-      toast.error("Veuillez remplir tous les champs");
-      return;
-    }
-
-    // Ici tu peux faire appel à ton backend ou JSON Server pour sauvegarder la réservation
-    console.log({
-      ticketId: ticket.id,
-      departure,
-      destination,
-      date,
-      name,
-      email,
-      phone,
-      price: ticket.price,
-    });
-
-    toast.success("Paiement effectué !");
-    navigate("/confirmation", { state: { ticket, departure, destination, date, name } });
-  };
-
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-      <h1 className="text-3xl font-bold text-blue-700 mb-6">Paiement</h1>
-
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md flex flex-col gap-4">
-        <p>
-          <strong>Itinéraire :</strong> {departure} → {destination}
-        </p>
-        <p>
-          <strong>Date :</strong> {date}
-        </p>
-        <p>
-          <strong>Nom du bus :</strong> {ticket.name}
-        </p>
-        <p>
-          <strong>Heure :</strong> {ticket.time}
-        </p>
-        <p>
-          <strong>Prix :</strong> ${ticket.price}
-        </p>
-
-        <input
-          type="text"
-          placeholder="Nom complet"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
-        />
-
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
-        />
-
-        <input
-          type="tel"
-          placeholder="Téléphone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
-        />
-
-        <Button
-          onClick={handlePayment}
-          className="bg-yellow-500 text-blue-700 px-4 py-2 rounded-lg font-medium hover:bg-yellow-400 transition"
-        >
-          Payer
-        </Button>
+    <div className="min-h-screen mt-24 bg-gradient-to-br from-indigo-50 to-purple-100 pb-12">
+      
+      {/* Header */}
+      <div className="bg-gradient-to-r from-color2 to-color3 text-white p-6 shadow-xl">
+        <button className="flex gap-2 items-center"
+          onClick={() => navigate(-1)}>
+          <ArrowLeft size={22} />
+          <span>Back</span>
+        </button>
+        <Text as="h1" className="text-3xl font-bold mt-2">Payment & Confirmation</Text>
       </div>
 
-      <Toaster position="top-right" reverseOrder={false} />
-    </section>
+      <div className="max-w-4xl mx-auto px-6 pt-8 space-y-8">
+
+        {/* Reservation Summary */}
+        <Fade>
+          <div className="bg-white rounded-2xl shadow-2xl p-6 border-2">
+            <Text as="h2" className="text-xl font-bold mb-4">Reservation Summary</Text>
+            <div className="space-y-2 text-gray-700">
+              <p><strong>Passenger:</strong> {passengerInfo.firstName} {passengerInfo.lastName}</p>
+              <p><strong>Route:</strong> {departure} → {destination}</p>
+              <p><strong>Date:</strong> {date} at {departureTime}</p>
+              <p><strong>Seat:</strong> {selectedSeat}</p>
+              <p><strong>Price:</strong> {ticket.price.toLocaleString()} FCFA</p>
+            </div>
+          </div>
+        </Fade>
+
+        {/* Payment Method */}
+        <Fade delay={200}>
+          <div className="bg-white rounded-2xl shadow-2xl p-6 border-2">
+            <Text as="h2" className="text-xl font-bold mb-4">Choose Payment Method</Text>
+
+            <div className="space-y-3">
+              {["MTN", "Orange"].map((network) => (
+                <label
+                  key={network}
+                  className={`border-2 rounded-xl p-4 flex justify-between items-center cursor-pointer ${
+                    paymentMethod === network 
+                      ? "border-color3 bg-purple-50" 
+                      : "border-gray-300"
+                  }`}
+                  onClick={() => setPaymentMethod(network)}
+                >
+                  <div className="flex items-center gap-3">
+                    <Phone size={22} />
+                    <span className="font-semibold">{network} Mobile Money</span>
+                  </div>
+                  {paymentMethod === network && (
+                    <CheckCircle size={24} weight="fill" className="text-color3" />
+                  )}
+                </label>
+              ))}
+            </div>
+          </div>
+        </Fade>
+
+        {/* Payment Buttons */}
+        <Fade delay={300}>
+          <div className="flex flex-col md:flex-row gap-4">
+            <Button
+              type="button"
+              onClick={handlePayment}
+              className="bg-color2 w-full py-3 rounded-lg text-white font-bold hover:bg-color3 shadow-lg"
+            >
+              Pay {ticket.price.toLocaleString()} FCFA
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleCancelRefund}
+              className="bg-red-600 w-full py-3 rounded-lg text-white font-bold hover:bg-red-700 shadow-lg"
+            >
+              Cancel & Refund
+            </Button>
+          </div>
+        </Fade>
+      </div>
+    </div>
   );
 };
 
