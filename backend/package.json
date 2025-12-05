@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+     "dev": "vite",
+    "server": "json-server --watch server/db.json --port 3001 --routes server/routes.json",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\""
   },
   "keywords": [],
   "author": "",
@@ -16,4 +19,8 @@
     "express": "^5.1.0",
     "json-server": "^1.0.0-beta.3"
   }
+  
+  
 }
+  
+

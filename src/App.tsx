@@ -9,6 +9,9 @@ import { useEffect } from "react";
 import Ticketdispo from "./components/pages/Ticketpage";
 import Confimation from "./components/pages/Confirmationpage";
 import Paiementdispo from "./components/pages/PaiementPage";
+import AdminDashboard from "./components/pages/Admindashboard";
+import Login from "./components/pages/Login";
+
 
 
 
@@ -28,7 +31,11 @@ function App() {
         {<Route path="/ticket-details" element={<Ticketdispo/>} /> }
         {<Route path="/confirmation" element={<Confimation/>} /> }
          {<Route path="/pay" element={<Paiementdispo/>} /> }
+        
+           {<Route path="/admin/login" element={<Login/>} /> }
+           <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
+     
      
       
      

@@ -1,0 +1,6 @@
+{
+  "/api/*": "/$1",
+  "/search-trips?departure=:departure&destination=:destination&date=:date": "/trips?departure=:departure&destination=:destination&date=:date",
+  "/bus/:id": "/buses/:id",
+  "/trip/:id": "/trips/:id"
+}
