@@ -32,7 +32,7 @@ const Services = () => {
     return (
         <section className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-20 px-6">
             <Image image={GroupOfPlus} alt="Vector" className="absolute top-0 right-4 lg:h-36 h-24" />
-            <main className="w-full pt-32 flex flex-col gap-3 items-center justify-center">
+            <main className="w-full pt-16 flex flex-col gap-3 items-center justify-center">
                 <Text as="p" className="font-light text-base text-color3/80 tracking-widest">
                     <Fade>{ServiceTexts.firstText}</Fade>
                 </Text>
@@ -40,7 +40,7 @@ const Services = () => {
                     <Fade>{ServiceTexts.secondText}</Fade>
                 </Text>
 
-                <div className="w-full h-auto grid lg:grid-cols-4 md:grid-cols-2 lg:gap-7 md:gap-10 gap-7 my-12 z-20 px-8 md:px-0">
+                <div className="w-full h-auto grid lg:grid-cols-4 md:grid-cols-2 lg:gap-7 md:gap-10 gap-7 my-8 z-20 px-8 md:px-0">
                     {
                         ServiceTexts.cards.map((card, index) => (
 

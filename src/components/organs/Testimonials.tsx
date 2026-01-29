@@ -53,7 +53,7 @@ const Testimonials = () => {
     }, [])
 
     return (
-        <section className="w-full h-auto flex flex-col items-start justify-center relative lg:px-24 md:px-10 px-6 mt-36 gap-5">
+        <section className="w-full h-auto flex flex-col items-start justify-center relative lg:px-24 md:px-10 px-6 mt-12 gap-5">
             <main className='w-full grid md:grid-cols-2 lg:gap-0 gap-8 md:gap-5'>
                 {/* Text and Steps Container  */}
                 <div className='w-full flex flex-col gap-6'>
@@ -70,8 +70,8 @@ const Testimonials = () => {
                         <Slider ref={(slider) => (sliderRef.current = slider)} {...settings}>
                             {
                                 TestimonialTexts.feedBacks.map((feedBack, index) => (
-                                    <div className="w-full">
-                                        <Card key={index} cardClass="bg-white shadow border-[1px] border-color3/10 relative rounded-xl p-4 lg:h-[200px] h-[260px] lg:mb-4 w-full flex gap-4 justify-start" imageAlt={feedBack.person} imageSrc={renderProfileImg(index)} imageWrapperClass="w-20 h-20 rounded-full absolute lg:bottom-4 bottom-3 right-4 overflow-hidden" cover="object-cover object-top" textWrapperClass="flex flex-col justify-center gap-6">
+                                    <div key={index} className="w-full">
+                                        <Card cardClass="bg-white shadow border-[1px] border-color3/10 relative rounded-xl p-4 lg:h-[200px] h-[260px] lg:mb-4 w-full flex gap-4 justify-start" imageAlt={feedBack.person} imageSrc={renderProfileImg(index)} imageWrapperClass="w-20 h-20 rounded-full absolute lg:bottom-4 bottom-3 right-4 overflow-hidden" cover="object-cover object-top" textWrapperClass="flex flex-col justify-center gap-6">
                                             <Text as="q" className="text-[0.84rem] font-light text-color3">
                                                 {feedBack.text}
                                             </Text>

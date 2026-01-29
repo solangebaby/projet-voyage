@@ -7,7 +7,7 @@ import groupOfPlus from "../../assets/plusGroup2.png"
 
 const NewsLetter = () => {
     return (
-        <section className="w-full my-32 flex justify-between relative items-start h-[400px]">
+        <section className="w-full my-16 flex justify-between relative items-start h-[320px]">
             <div className="bg-color3/10 w-[30%] h-[70%] self-end rounded-r-xl"></div>
             <div className="bg-color3/10 w-[30%] h-[70%] rounded-l-xl"></div>
             <div className="w-full bg-color3/5 h-[100%] absolute flex flex-col items-center

@@ -23,7 +23,7 @@ const BookingSteps = () => {
     }, [])
 
     return (
-        <section className="w-full h-auto flex flex-col items-start justify-center relative lg:px-24 md:px-10 px-6 my-28 gap-5">
+        <section className="w-full h-auto flex flex-col items-start justify-center relative lg:px-24 md:px-10 px-6 my-12 gap-5">
             <Text as="p" className="font-light text-base text-color3/80 tracking-widest">
                 {BookingStepsTexts.firstText}
             </Text>

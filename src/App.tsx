@@ -1,47 +1,90 @@
-import { Routes, Route, useLocation } from "react-router-dom";
-//importing react slick slider
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-
-import { animateScroll } from "react-scroll";
-import Home from "./components/pages/Home";
-import { useEffect } from "react";
-import Ticketdispo from "./components/pages/Ticketpage";
-import Confimation from "./components/pages/Confirmationpage";
-import Paiementdispo from "./components/pages/PaiementPage";
-import AdminDashboard from "./components/pages/Admindashboard";
-import Login from "./components/pages/Login";
-
-
-
+import { Routes, Route } from 'react-router-dom';
+import Home from './components/pages/Home';
+import AdminLogin from './components/pages/AdminLogin';
+import Signup from './components/pages/Signup';
+import Register from './components/pages/Register';
+import Ticketpage from './components/pages/Ticketpage';
+import Tickets from './components/pages/Tickets';
+import Confirmation from './components/pages/Confirmation';
+import Payment from './components/pages/Payment';
+import Confirmationpage from './components/pages/Confirmationpage';
+import Admindashboard from './components/pages/Admindashboard';
+import TravelerDashboard from './components/pages/TravelerDashboard';
+import Cancel from './components/pages/Cancel';
+import ProtectedRoute from './components/PrivateRoute';
+import CityManagement from './components/admin/CityManagement';
+import RouteManagement from './components/admin/RouteManagement';
+import BusFleetManagement from './components/admin/BusFleetManagement';
+import VoyageManagement from './components/admin/VoyageManagement';
 
 function App() {
-  const directory = useLocation();
-  useEffect(() => {
-    animateScroll.scrollToTop({
-      duration: 0,
-    });
-  }, [directory.pathname]);
-
   return (
-    <div className="w-full bg-white text-gray-950 font-poppins">
-     
-      <Routes>
-        <Route path="/" element={<Home />} />  
-        {<Route path="/ticket-details" element={<Ticketdispo/>} /> }
-        {<Route path="/confirmation" element={<Confimation/>} /> }
-         {<Route path="/pay" element={<Paiementdispo/>} /> }
-        
-           {<Route path="/admin/login" element={<Login/>} /> }
-           <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
-     
-     
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/register" element={<Register />} />
+      <Route path="/signup" element={<Signup />} />
       
-     
-
-    </div>
-  )
+      {/* Ticket Routes */}
+      <Route path="/tickets" element={<Ticketpage />} />
+      <Route path="/ticket-details" element={<Tickets />} />
+      <Route path="/confirmation" element={<Confirmation />} />
+      <Route path="/payment" element={<Payment />} />
+      <Route path="/ticket" element={<Confirmationpage />} />
+      <Route path="/cancel" element={<Cancel />} />
+      
+      {/* Protected Routes */}
+      <Route 
+        path="/admin/dashboard" 
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <Admindashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/cities" 
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <CityManagement />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/routes" 
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <RouteManagement />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/buses" 
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <BusFleetManagement />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/admin/voyages" 
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <VoyageManagement />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/traveler/dashboard" 
+        element={
+          <ProtectedRoute allowedRole="voyageur">
+            <TravelerDashboard />
+          </ProtectedRoute>
+        } 
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

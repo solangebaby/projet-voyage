@@ -1,684 +1,413 @@
-// // src/services/api.ts
-// import axios from 'axios';
-
-// const API_BASE_URL = 'http://localhost:3001';
-
-// const api = axios.create({
-//   baseURL: API_BASE_URL,
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-// });
-
-// // ==================== TYPES ====================
-// export interface Admin {
-//   id?: number;
-//   email: string;
-//   password: string;
-// }
-
-// export interface Destination {
-//   id: number;
-//   city: string;
-// }
-
-// export interface Bus {
-//   id: number;
-//   busName: string;
-//   type: 'standard' | 'vip';
-//   price: number;
-//   totalSeats: number;
-//   features: string[];
-// }
-
-// export interface Trip {
-//   id?: number;
-//   busId: number;
-//   departure: string;
-//   destination: string;
-//   date: string;
-//   departureTime: string;
-//   arrivalTime: string;
-//   availableSeats: number;
-//   occupiedSeats: string[];
-// }
-
-// export interface Passenger {
-//   id?: string;
-//   firstName: string;
-//   lastName: string;
-//   cniKit: string;
-//   gender: string;
-//   civility: string;
-//   email: string;
-//   phone: string;
-//   createdAt?: string;
-// }
-
-// export interface Reservation {
-//   id?: string;
-//   passengerId: string;
-//   tripId: number;
-//   busId: number;
-//   selectedSeat: string;
-//   departure: string;
-//   destination: string;
-//   date: string;
-//   departureTime: string;
-//   arrivalTime: string;
-//   price: number;
-//   status: 'pending' | 'confirmed' | 'cancelled';
-//   createdAt?: string;
-// }
-
-// export interface Payment {
-//   id?: string;
-//   reservationId: string;
-//   amount: number;
-//   method: 'MTN' | 'Orange';
-//   phoneNumber: string;
-//   transactionId: string;
-//   status: 'pending' | 'success' | 'failed' | 'refunded';
-//   createdAt?: string;
-//   refundedAt?: string;
-// }
-
-// export interface Ticket {
-//   id?: string;
-//   reservationId: string;
-//   passengerId: string;
-//   qrCode: string;
-//   ticketNumber: string;
-//   busName: string;
-//   departure: string;
-//   destination: string;
-//   date: string;
-//   departureTime: string;
-//   selectedSeat: string;
-//   price: number;
-//   passengerName: string;
-//   isUsed: boolean;
-//   createdAt?: string;
-// }
-
-// // ==================== ADMIN ====================
-// export const loginAdmin = async (email: string, password: string): Promise<Admin | null> => {
-//   try {
-//     const response = await api.get('/admins', {
-//       params: { email, password }
-//     });
-    
-//     if (response.data.length > 0) {
-//       return response.data[0];
-//     }
-//     return null;
-//   } catch (error) {
-//     console.error('Login error:', error);
-//     return null;
-//   }
-// };
-
-// // ==================== DESTINATIONS ====================
-// export const getDestinations = async (): Promise<Destination[]> => {
-//   const response = await api.get('/destinations');
-//   return response.data;
-// };
-
-// // ==================== BUSES ====================
-// export const getBuses = async (): Promise<Bus[]> => {
-//   const response = await api.get('/buses');
-//   return response.data;
-// };
-
-// export const getBusById = async (id: number): Promise<Bus> => {
-//   const response = await api.get(`/buses/${id}`);
-//   return response.data;
-// };
-
-// // ==================== TRIPS ====================
-// export const searchTrips = async (
-//   departure: string,
-//   destination: string,
-//   date: string
-// ): Promise<Trip[]> => {
-//   try {
-//     const response = await api.get('/trips', {
-//       params: { departure, destination, date },
-//     });
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error searching trips:', error);
-//     return [];
-//   }
-// };
-
-// export const getTripById = async (id: number): Promise<Trip> => {
-//   const response = await api.get(`/trips/${id}`);
-//   return response.data;
-// };
-
-// export const createTrip = async (trip: Trip): Promise<Trip> => {
-//   const response = await api.post('/trips', trip);
-//   return response.data;
-// };
-
-// // ==================== PASSENGERS ====================
-// export const createPassenger = async (passenger: Passenger): Promise<Passenger> => {
-//   const passengerWithId = {
-//     ...passenger,
-//     id: `PASS-${Date.now()}`,
-//     createdAt: new Date().toISOString(),
-//   };
-//   const response = await api.post('/passengers', passengerWithId);
-//   return response.data;
-// };
-
-// export const getPassengerById = async (id: string): Promise<Passenger> => {
-//   const response = await api.get(`/passengers/${id}`);
-//   return response.data;
-// };
-
-// // ==================== RESERVATIONS ====================
-// export const createReservation = async (reservation: Reservation): Promise<Reservation> => {
-//   const reservationWithId = {
-//     ...reservation,
-//     id: `RES-${Date.now()}`,
-//     status: 'pending',
-//     createdAt: new Date().toISOString(),
-//   };
-//   const response = await api.post('/reservations', reservationWithId);
-  
-//   // Mettre à jour les sièges occupés
-//   const trip = await getTripById(reservation.tripId);
-//   const updatedOccupiedSeats = [...trip.occupiedSeats, reservation.selectedSeat];
-//   await api.patch(`/trips/${reservation.tripId}`, {
-//     occupiedSeats: updatedOccupiedSeats,
-//     availableSeats: trip.availableSeats - 1,
-//   });
-  
-//   return response.data;
-// };
-
-// export const getReservationById = async (id: string): Promise<Reservation> => {
-//   const response = await api.get(`/reservations/${id}`);
-//   return response.data;
-// };
-
-// export const updateReservationStatus = async (
-//   id: string,
-//   status: 'confirmed' | 'cancelled'
-// ): Promise<Reservation> => {
-//   const response = await api.patch(`/reservations/${id}`, { status });
-//   return response.data;
-// };
-
-// export const getAllReservations = async (): Promise<Reservation[]> => {
-//   const response = await api.get('/reservations');
-//   return response.data;
-// };
-
-// // ==================== PAYMENTS ====================
-// export const createPayment = async (payment: Payment): Promise<Payment> => {
-//   const paymentWithId = {
-//     ...payment,
-//     id: `PAY-${Date.now()}`,
-//     transactionId: `NOTPAY-${Math.floor(Math.random() * 999999)}`,
-//     status: 'pending',
-//     createdAt: new Date().toISOString(),
-//   };
-//   const response = await api.post('/payments', paymentWithId);
-//   return response.data;
-// };
-
-// export const updatePaymentStatus = async (
-//   id: string,
-//   status: 'success' | 'failed' | 'refunded'
-// ): Promise<Payment> => {
-//   const updateData: any = { status };
-//   if (status === 'refunded') {
-//     updateData.refundedAt = new Date().toISOString();
-//   }
-//   const response = await api.patch(`/payments/${id}`, updateData);
-//   return response.data;
-// };
-
-// export const getPaymentsByReservationId = async (reservationId: string): Promise<Payment[]> => {
-//   const response = await api.get(`/payments?reservationId=${reservationId}`);
-//   return response.data;
-// };
-
-// export const getAllPayments = async (): Promise<Payment[]> => {
-//   const response = await api.get('/payments');
-//   return response.data;
-// };
-
-// // ==================== TICKETS ====================
-// export const createTicket = async (ticket: Ticket): Promise<Ticket> => {
-//   const ticketWithId = {
-//     ...ticket,
-//     id: `TICK-${Date.now()}`,
-//     ticketNumber: `FX-${Date.now().toString().slice(-8)}`,
-//     isUsed: false,
-//     createdAt: new Date().toISOString(),
-//   };
-//   const response = await api.post('/tickets', ticketWithId);
-//   return response.data;
-// };
-
-// export const getTicketById = async (id: string): Promise<Ticket> => {
-//   const response = await api.get(`/tickets/${id}`);
-//   return response.data;
-// };
-
-// export const getAllTickets = async (): Promise<Ticket[]> => {
-//   const response = await api.get('/tickets');
-//   return response.data;
-// };
-
-// // ==================== REFUND ====================
-// export const refundReservation = async (reservationId: string): Promise<boolean> => {
-//   try {
-//     const reservation = await getReservationById(reservationId);
-    
-//     // Vérifier le délai de 10 minutes
-//     const createdAt = new Date(reservation.createdAt!);
-//     const now = new Date();
-//     const diffMinutes = (now.getTime() - createdAt.getTime()) / (1000 * 60);
-    
-//     if (diffMinutes > 10) {
-//       throw new Error('Refund period (10 minutes) has expired');
-//     }
-    
-//     // Mettre à jour le statut de la réservation
-//     await updateReservationStatus(reservationId, 'cancelled');
-    
-//     // Libérer le siège
-//     const trip = await getTripById(reservation.tripId);
-//     const updatedOccupiedSeats = trip.occupiedSeats.filter(
-//       seat => seat !== reservation.selectedSeat
-//     );
-//     await api.patch(`/trips/${reservation.tripId}`, {
-//       occupiedSeats: updatedOccupiedSeats,
-//       availableSeats: trip.availableSeats + 1,
-//     });
-    
-//     // Mettre à jour le paiement
-//     const payments = await getPaymentsByReservationId(reservationId);
-//     if (payments.length > 0) {
-//       await updatePaymentStatus(payments[0].id!, 'refunded');
-//     }
-    
-//     return true;
-//   } catch (error) {
-//     console.error('Refund failed:', error);
-//     return false;
-//   }
-// };
-
-// export default api;
-// src/services/api.ts
+// API Service for Laravel Backend
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = 'http://localhost:8000/api';
 
-const api = axios.create({
+// Create axios instance
+const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
 });
 
-// ==================== TYPES ====================
-export interface Admin {
-  id?: number;
-  email: string;
-  password: string;
-}
+// Add token to requests
+apiClient.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-export interface Destination {
+// Types
+export interface User {
   id: number;
-  city: string;
+  name: string;
+  first_name: string;
+  email: string;
+  phone?: string;
+  cni_number?: string;
+  civility?: string;
+  gender?: string;
+  role: 'admin' | 'voyageur';
+  status: 'active' | 'pending';
 }
 
 export interface Bus {
   id: number;
-  busName: string;
+  bus_name: string;
+  matricule: string;
   type: 'standard' | 'vip';
+  total_seats: number;
   price: number;
-  totalSeats: number;
-  features: string[];
+  features?: string[];
+}
+
+export interface Destination {
+  id: number;
+  city_name: string;
 }
 
 export interface Trip {
-  id?: number;
-  busId: number;
-  departure: string;
-  destination: string;
-  date: string;
-  departureTime: string;
-  arrivalTime: string;
-  availableSeats: number;
-  occupiedSeats: string[];
-}
-
-export interface Passenger {
-  id?: string;
-  firstName: string;
-  lastName: string;
-  cniKit: string;
-  gender: string;
-  civility: string;
-  email: string;
-  phone: string;
-  createdAt?: string;
+  id: number;
+  bus_id: number;
+  departure_id: number;
+  destination_id: number;
+  departure_date: string;
+  departure_time: string;
+  arrival_date: string;
+  arrival_time: string;
+  available_seats: number;
+  occupied_seats?: string[];
+  distance_km?: number;
+  status: 'active' | 'completed' | 'cancelled';
+  bus?: Bus;
+  departure?: Destination;
+  destination?: Destination;
 }
 
 export interface Reservation {
-  id?: string;
-  passengerId: string;
-  tripId: number;
-  busId: number;
-  selectedSeat: string;
-  departure: string;
-  destination: string;
-  date: string;
-  departureTime: string;
-  arrivalTime: string;
-  price: number;
+  id: number;
+  user_id: number;
+  trip_id: number;
+  selected_seat: string;
   status: 'pending' | 'confirmed' | 'cancelled';
-  createdAt?: string;
+  expires_at?: string;
+  cancelled_at?: string;
+  trip?: Trip;
+  payment?: Payment;
+  ticket?: Ticket;
 }
 
 export interface Payment {
-  id?: string;
-  reservationId: string;
+  id: number;
+  reservation_id: number;
+  transaction_id: string;
+  reference: string;
   amount: number;
-  method: 'MTN' | 'Orange';
-  phoneNumber: string;
-  transactionId: string;
-  status: 'pending' | 'success' | 'failed' | 'refunded';
-  createdAt?: string;
-  refundedAt?: string;
+  currency: string;
+  method: 'MTN' | 'Orange' | 'Bancaire';
+  phone_number?: string;
+  status: 'pending' | 'completed' | 'failed' | 'refunded';
+  completed_at?: string;
+  refunded_at?: string;
 }
 
 export interface Ticket {
-  id?: string;
-  reservationId: string;
-  passengerId: string;
-  qrCode: string;
-  ticketNumber: string;
-  busName: string;
-  departure: string;
-  destination: string;
-  date: string;
-  departureTime: string;
-  selectedSeat: string;
-  price: number;
-  passengerName: string;
-  isUsed: boolean;
-  createdAt?: string;
+  id: number;
+  reservation_id: number;
+  ticket_number: string;
+  qr_code?: string;
+  status: 'valid' | 'used' | 'cancelled';
+  reservation?: Reservation;
 }
 
-// ==================== ADMIN ====================
-export const loginAdmin = async (email: string, password: string): Promise<Admin | null> => {
-  try {
-    const response = await api.get('/admins', {
-      params: { email, password }
-    });
-    
-    if (response.data.length > 0) {
-      return response.data[0];
-    }
-    return null;
-  } catch (error) {
-    console.error('Login error:', error);
-    return null;
-  }
+export interface PassengerInput {
+  firstName: string;
+  lastName: string;
+  cniNumber: string;
+  email: string;
+  phone: string;
+}
+
+// API Functions
+
+// Authentication
+export const register = async (data: any) => {
+  const response = await apiClient.post('/register', data);
+  return response.data;
 };
 
-// ==================== DESTINATIONS ====================
+export const login = async (email: string, password: string) => {
+  const response = await apiClient.post('/login', { email, password });
+  return response.data;
+};
+
+export const logout = async () => {
+  const response = await apiClient.post('/logout');
+  return response.data;
+};
+
+export const getUser = async () => {
+  const response = await apiClient.get('/user');
+  return response.data;
+};
+
+// Destinations
 export const getDestinations = async (): Promise<Destination[]> => {
-  const response = await api.get('/destinations');
-  return response.data;
+  try {
+    const response = await apiClient.get('/destinations');
+    return response.data.data || [];
+  } catch (error) {
+    console.error('Error fetching destinations:', error);
+    throw new Error('Failed to load destinations. Please check your connection and try again.');
+  }
 };
 
-// ==================== BUSES ====================
+// Buses
 export const getBuses = async (): Promise<Bus[]> => {
-  const response = await api.get('/buses');
-  return response.data;
+  const response = await apiClient.get('/buses');
+  return response.data.data;
 };
 
-export const getBusById = async (id: number): Promise<Bus> => {
-  const response = await api.get(`/buses/${id}`);
-  return response.data;
+export const getBus = async (id: number): Promise<Bus> => {
+  const response = await apiClient.get(`/buses/${id}`);
+  return response.data.data;
 };
 
-// ==================== TRIPS ====================
-export const searchTrips = async (
-  departure: string,
-  destination: string,
-  date: string
-): Promise<Trip[]> => {
-  try {
-    const response = await api.get('/trips', {
-      params: { departure, destination, date },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error searching trips:', error);
-    return [];
-  }
+// Trips
+export const getTrips = async (): Promise<Trip[]> => {
+  const response = await apiClient.get('/trips');
+  return response.data.data;
 };
 
-export const getTripById = async (id: number): Promise<Trip> => {
-  const response = await api.get(`/trips/${id}`);
-  return response.data;
+export const searchTrips = async (params: {
+  departure?: string;
+  destination?: string;
+  date?: string;
+}): Promise<Trip[]> => {
+  const response = await apiClient.get('/trips/search', { params });
+  return response.data.data;
 };
 
-export const createTrip = async (trip: Trip): Promise<Trip> => {
-  const response = await api.post('/trips', trip);
-  return response.data;
+export const getTrip = async (id: number): Promise<Trip> => {
+  const response = await apiClient.get(`/trips/${id}`);
+  return response.data.data;
 };
 
-export const updateTrip = async (id: number, trip: Partial<Trip>): Promise<Trip> => {
-  const response = await api.patch(`/trips/${id}`, trip);
-  return response.data;
-};
-
-// ==================== PASSENGERS ====================
-export const createPassenger = async (passenger: Passenger): Promise<Passenger> => {
-  const passengerWithId = {
-    ...passenger,
-    id: `PASS-${Date.now()}`,
-    createdAt: new Date().toISOString(),
+// Reservations
+export const createReservation = async (data: {
+  trip_id: number;
+  passenger_id: number;
+  selected_seat: string;
+  passenger_info?: {
+    first_name: string;
+    last_name: string;
+    phone: string;
+    email: string;
   };
-  const response = await api.post('/passengers', passengerWithId);
+}) => {
+  const response = await apiClient.post('/reservations', data);
+  return response.data.data;
+};
+
+export const getReservation = async (id: number): Promise<Reservation> => {
+  const response = await apiClient.get(`/reservations/${id}`);
+  return response.data.data;
+};
+
+export const getUserReservations = async (userId: number): Promise<Reservation[]> => {
+  const response = await apiClient.get(`/reservations/user/${userId}`);
+  return response.data.data;
+};
+
+export const cancelReservation = async (id: number) => {
+  const response = await apiClient.post(`/reservations/${id}/cancel`);
   return response.data;
 };
 
-export const getPassengerById = async (id: string): Promise<Passenger> => {
-  const response = await api.get(`/passengers/${id}`);
-  return response.data;
-};
-
-// ==================== RESERVATIONS ====================
-export const createReservation = async (reservation: Reservation): Promise<Reservation> => {
-  try {
-    const reservationWithId = {
-      ...reservation,
-      id: `RES-${Date.now()}`,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-    };
-    
-    // Créer la réservation
-    const response = await api.post('/reservations', reservationWithId);
-    
-    // Mettre à jour les sièges occupés du trip
-    const trip = await getTripById(reservation.tripId);
-    const updatedOccupiedSeats = [...trip.occupiedSeats, reservation.selectedSeat];
-    await updateTrip(reservation.tripId, {
-      occupiedSeats: updatedOccupiedSeats,
-      availableSeats: trip.availableSeats - 1,
-    });
-    
-    return response.data;
-  } catch (error) {
-    console.error('Error creating reservation:', error);
-    throw error;
+// Payments
+export const initiatePayment = async (data: {
+  reservation_id: number;
+  amount: number;
+  payment_method: string;
+  phone_number?: string;
+}) => {
+  // Transform payment_method to match backend expectations
+  let method = 'Bancaire';
+  let phone_number = data.phone_number;
+  
+  if (data.payment_method.includes('mobile_money_')) {
+    const provider = data.payment_method.replace('mobile_money_', '');
+    method = provider; // MTN, Orange, or Moov
+  } else if (data.payment_method === 'card') {
+    method = 'Bancaire';
   }
-};
-
-export const getReservationById = async (id: string): Promise<Reservation> => {
-  const response = await api.get(`/reservations/${id}`);
-  return response.data;
-};
-
-export const updateReservationStatus = async (
-  id: string,
-  status: 'confirmed' | 'cancelled'
-): Promise<Reservation> => {
-  const response = await api.patch(`/reservations/${id}`, { status });
-  return response.data;
-};
-
-export const getAllReservations = async (): Promise<Reservation[]> => {
-  const response = await api.get('/reservations');
-  return response.data;
-};
-
-// ==================== PAYMENTS ====================
-export const createPayment = async (payment: Payment): Promise<Payment> => {
-  const paymentWithId = {
-    ...payment,
-    id: `PAY-${Date.now()}`,
-    transactionId: `NOTPAY-${Math.floor(Math.random() * 999999)}`,
-    status: 'pending',
-    createdAt: new Date().toISOString(),
-  };
-  const response = await api.post('/payments', paymentWithId);
-  return response.data;
-};
-
-export const updatePaymentStatus = async (
-  id: string,
-  status: 'success' | 'failed' | 'refunded'
-): Promise<Payment> => {
-  const updateData: any = { status };
-  if (status === 'refunded') {
-    updateData.refundedAt = new Date().toISOString();
-  }
-  const response = await api.patch(`/payments/${id}`, updateData);
-  return response.data;
-};
-
-export const getPaymentsByReservationId = async (reservationId: string): Promise<Payment[]> => {
-  const response = await api.get(`/payments?reservationId=${reservationId}`);
-  return response.data;
-};
-
-export const getAllPayments = async (): Promise<Payment[]> => {
-  const response = await api.get('/payments');
-  return response.data;
-};
-
-// ==================== TICKETS ====================
-// Fonction pour générer le code QR (en format data URL)
-const generateQRCode = (data: string): string => {
-  // Simple QR code generation using a data format
-  // In production, you would use a library like qrcode
-  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(data)}`;
-};
-
-export const createTicket = async (
-  reservation: Reservation,
-  passenger: Passenger,
-  busName: string
-): Promise<Ticket> => {
-  const ticketNumber = `FX-${Date.now().toString().slice(-8)}`;
-  const qrData = JSON.stringify({
-    ticketNumber,
-    reservationId: reservation.id,
-    passengerId: passenger.id,
-    seat: reservation.selectedSeat,
-    date: reservation.date
+  
+  const response = await apiClient.post('/payments/initiate', {
+    reservation_id: data.reservation_id,
+    method: method,
+    phone_number: phone_number || '00000000'
   });
-  
-  const ticketWithId: Ticket = {
-    id: `TICK-${Date.now()}`,
-    reservationId: reservation.id!,
-    passengerId: passenger.id!,
-    ticketNumber,
-    qrCode: generateQRCode(qrData),
-    busName,
-    departure: reservation.departure,
-    destination: reservation.destination,
-    date: reservation.date,
-    departureTime: reservation.departureTime,
-    selectedSeat: reservation.selectedSeat,
-    price: reservation.price,
-    passengerName: `${passenger.firstName} ${passenger.lastName}`,
-    isUsed: false,
-    createdAt: new Date().toISOString(),
-  };
-  
-  const response = await api.post('/tickets', ticketWithId);
+  return response.data.data;
+};
+
+export const verifyPayment = async (transactionId: string) => {
+  const response = await apiClient.post('/payments/verify', {
+    transaction_id: transactionId,
+  });
   return response.data;
 };
 
-export const getTicketById = async (id: string): Promise<Ticket> => {
-  const response = await api.get(`/tickets/${id}`);
+// Tickets
+export const getTicketByNumber = async (ticketNumber: string): Promise<Ticket> => {
+  const response = await apiClient.get(`/tickets/${ticketNumber}`);
+  return response.data.data;
+};
+
+export const getUserTickets = async (userId: number): Promise<Ticket[]> => {
+  const response = await apiClient.get(`/tickets/user/${userId}`);
+  return response.data.data;
+};
+
+export const createTicket = async (reservationId: number): Promise<Ticket> => {
+  // Ticket is created automatically after payment verification
+  const response = await apiClient.get(`/reservations/${reservationId}`);
+  return response.data.data.ticket;
+};
+
+export const getTicketDetails = async (ticketIdentifier: string | number): Promise<any> => {
+  const response = await apiClient.get(`/tickets/${ticketIdentifier}`);
+  return response.data.data;
+};
+
+export const downloadTicket = async (ticketIdentifier: string | number): Promise<Blob> => {
+  const response = await apiClient.get(`/tickets/${ticketIdentifier}/pdf`, {
+    responseType: 'blob'
+  });
   return response.data;
 };
 
-export const getTicketByReservationId = async (reservationId: string): Promise<Ticket | null> => {
-  const response = await api.get(`/tickets?reservationId=${reservationId}`);
-  return response.data.length > 0 ? response.data[0] : null;
+// Passengers
+export const createPassenger = async (data: PassengerInput) => {
+  // In Laravel backend, passenger info is part of user registration
+  // For guest booking, we'll use the reservation user
+  return data;
 };
 
-export const getAllTickets = async (): Promise<Ticket[]> => {
-  const response = await api.get('/tickets');
-  return response.data;
-};
+// Auth Service - Compatibility with utils/api.ts
+export const authService = {
+  setToken(token: string): void {
+    sessionStorage.setItem('auth_token', token);
+  },
 
-// ==================== REFUND ====================
-export const refundReservation = async (reservationId: string): Promise<boolean> => {
-  try {
-    const reservation = await getReservationById(reservationId);
-    
-    // Vérifier le délai de 10 minutes
-    const createdAt = new Date(reservation.createdAt!);
-    const now = new Date();
-    const diffMinutes = (now.getTime() - createdAt.getTime()) / (1000 * 60);
-    
-    if (diffMinutes > 10) {
-      throw new Error('Refund period (10 minutes) has expired');
-    }
-    
-    // Mettre à jour le statut de la réservation
-    await updateReservationStatus(reservationId, 'cancelled');
-    
-    // Libérer le siège
-    const trip = await getTripById(reservation.tripId);
-    const updatedOccupiedSeats = trip.occupiedSeats.filter(
-      seat => seat !== reservation.selectedSeat
-    );
-    await updateTrip(reservation.tripId, {
-      occupiedSeats: updatedOccupiedSeats,
-      availableSeats: trip.availableSeats + 1,
-    });
-    
-    // Mettre à jour le paiement
-    const payments = await getPaymentsByReservationId(reservationId);
-    if (payments.length > 0) {
-      await updatePaymentStatus(payments[0].id!, 'refunded');
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Refund failed:', error);
-    return false;
+  getToken(): string | null {
+    return sessionStorage.getItem('auth_token');
+  },
+
+  setUser(user: User): void {
+    sessionStorage.setItem('user', JSON.stringify(user));
+  },
+
+  getUser(): User | null {
+    const user = sessionStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  },
+
+  logout(): void {
+    sessionStorage.removeItem('auth_token');
+    sessionStorage.removeItem('user');
+  },
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
   }
 };
 
-export default api;
+// Admin Functions
+export const getCities = async () => {
+  const response = await apiClient.get('/cities');
+  return response.data;
+};
+
+export const createCity = async (data: { city_name: string; country: string }) => {
+  const response = await apiClient.post('/cities', data);
+  return response.data;
+};
+
+export const updateCity = async (id: number, data: { city_name?: string; country?: string }) => {
+  const response = await apiClient.put(`/cities/${id}`, data);
+  return response.data;
+};
+
+export const deleteCity = async (id: number) => {
+  const response = await apiClient.delete(`/cities/${id}`);
+  return response.data;
+};
+
+export const getRoutes = async () => {
+  const response = await apiClient.get('/routes');
+  return response.data;
+};
+
+export const createRoute = async (data: any) => {
+  const response = await apiClient.post('/routes', data);
+  return response.data;
+};
+
+export const updateRoute = async (id: number, data: any) => {
+  const response = await apiClient.put(`/routes/${id}`, data);
+  return response.data;
+};
+
+export const deleteRoute = async (id: number) => {
+  const response = await apiClient.delete(`/routes/${id}`);
+  return response.data;
+};
+
+export const getFleetBuses = async () => {
+  const response = await apiClient.get('/fleet/buses');
+  return response.data;
+};
+
+export const createBus = async (data: any) => {
+  const response = await apiClient.post('/fleet/buses', data);
+  return response.data;
+};
+
+export const updateBus = async (id: number, data: any) => {
+  const response = await apiClient.put(`/fleet/buses/${id}`, data);
+  return response.data;
+};
+
+export const deleteBus = async (id: number) => {
+  const response = await apiClient.delete(`/fleet/buses/${id}`);
+  return response.data;
+};
+
+export const getVoyages = async () => {
+  const response = await apiClient.get('/voyages');
+  return response.data;
+};
+
+export const createVoyage = async (data: any) => {
+  const response = await apiClient.post('/voyages', data);
+  return response.data;
+};
+
+export const updateVoyage = async (id: number, data: any) => {
+  const response = await apiClient.put(`/voyages/${id}`, data);
+  return response.data;
+};
+
+export const deleteVoyage = async (id: number) => {
+  const response = await apiClient.delete(`/voyages/${id}`);
+  return response.data;
+};
+
+export const getStatistics = async () => {
+  const response = await apiClient.get('/statistics');
+  return response.data;
+};
+
+export const getComments = async () => {
+  const response = await apiClient.get('/comments');
+  return response.data;
+};
+
+export const updateCommentStatus = async (id: number, status: string) => {
+  const response = await apiClient.put(`/comments/${id}/status`, { status });
+  return response.data;
+};
+
+export const deleteComment = async (id: number) => {
+  const response = await apiClient.delete(`/comments/${id}`);
+  return response.data;
+};
+
+// Named export for compatibility
+export const api = apiClient;
+
+export default apiClient;

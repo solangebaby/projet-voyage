@@ -32,6 +32,92 @@ const NavBar = () => {
         };
     }, []);
 
+    // Initialize Google Translate
+    useEffect(() => {
+        const addGoogleTranslateScript = () => {
+            // Check if script already exists
+            if (document.getElementById('google-translate-script')) {
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.id = 'google-translate-script';
+            script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+            script.async = true;
+            script.onerror = () => {
+                console.error('Failed to load Google Translate script');
+            };
+            document.body.appendChild(script);
+        };
+
+        // @ts-ignore
+        window.googleTranslateElementInit = () => {
+            try {
+                // @ts-ignore
+                if (typeof google !== 'undefined' && google.translate) {
+                    // Desktop widget
+                    const desktopElement = document.getElementById('google_translate_element');
+                    if (desktopElement && !desktopElement.hasChildNodes()) {
+                        // @ts-ignore
+                        new google.translate.TranslateElement(
+                            {
+                                pageLanguage: 'en',
+                                includedLanguages: 'en,fr,es,de,it,ar,pt',
+                                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                                autoDisplay: false
+                            },
+                            'google_translate_element'
+                        );
+                    }
+                    
+                    // Mobile widget
+                    const mobileElement = document.getElementById('google_translate_element_mobile');
+                    if (mobileElement && !mobileElement.hasChildNodes()) {
+                        // @ts-ignore
+                        new google.translate.TranslateElement(
+                            {
+                                pageLanguage: 'en',
+                                includedLanguages: 'en,fr,es,de,it,ar,pt',
+                                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                                autoDisplay: false
+                            },
+                            'google_translate_element_mobile'
+                        );
+                    }
+                }
+            } catch (error) {
+                console.error('Error initializing Google Translate:', error);
+            }
+        };
+
+        // Add script with retry logic
+        let retryCount = 0;
+        const maxRetries = 3;
+        const retryDelay = 1000;
+
+        const initWithRetry = () => {
+            addGoogleTranslateScript();
+            
+            // Check if initialization succeeded after delay
+            setTimeout(() => {
+                const desktopElement = document.getElementById('google_translate_element');
+                if (desktopElement && !desktopElement.hasChildNodes() && retryCount < maxRetries) {
+                    retryCount++;
+                    console.log(`Retrying Google Translate initialization (${retryCount}/${maxRetries})`);
+                    initWithRetry();
+                }
+            }, retryDelay);
+        };
+
+        initWithRetry();
+
+        return () => {
+            // Cleanup if needed
+            // @ts-ignore
+            delete window.googleTranslateElementInit;
+        };
+    }, []);
+
 
     return (
         <header className="w-full h-auto bg-transparent overflow-x-hidden fixed z-50 top-0 left-0">
@@ -58,20 +144,12 @@ const NavBar = () => {
                                 ))
                             }
                             <List className="text-gray-950">
-                                <select className="border-none font-light text-base outline-none bg-transparent">
-                                    <option value="EN" selected>EN</option>
-                                    <option value="ITA">ITA</option>
-                                    <option value="FRA">FRA</option>
-                                </select>
+                                <div id="google_translate_element"></div>
                             </List>
                         </ul>
                     </div>
                     <div className="lg:hidden flex gap-4 items-center">
-                        <select className="border-none outline-none font-light text-sm bg-transparent">
-                            <option value="EN" selected>EN</option>
-                            <option value="ITA">ITA</option>
-                            <option value="FRA">FRA</option>
-                        </select>
+                        <div id="google_translate_element_mobile"></div>
                         <div className="hamburger text-gray-950 cursor-pointer" onClick={handleToggle}>
                             <CirclesFour size={30} color="currentColor" weight="fill" />
                         </div>

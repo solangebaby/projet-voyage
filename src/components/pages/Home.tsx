@@ -7,6 +7,7 @@ import Partners from "../organs/Partners"
 import Services from "../organs/Services"
 import Testimonials from "../organs/Testimonials"
 import TopDestination from "../organs/TopDestination"
+import VideoSection from "../organs/VideoSection"
 
 
 const Home = () => {
@@ -17,6 +18,7 @@ const Home = () => {
             <Services />
             <TopDestination />
             <BookingSteps />
+            <VideoSection />
             <Testimonials />
             <Partners />
             <NewsLetter />

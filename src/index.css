@@ -31,3 +31,114 @@
     bottom: -1.5rem;
     left: -1.5rem;
 }
+
+/* Suitcase Roll Animation - Cross Browser Compatible */
+@keyframes suitcaseRoll {
+    0% {
+        transform: translateX(0) rotate(0deg);
+        -webkit-transform: translateX(0) rotate(0deg);
+        -moz-transform: translateX(0) rotate(0deg);
+        -ms-transform: translateX(0) rotate(0deg);
+    }
+    25% {
+        transform: translateX(50px) rotate(5deg);
+        -webkit-transform: translateX(50px) rotate(5deg);
+        -moz-transform: translateX(50px) rotate(5deg);
+        -ms-transform: translateX(50px) rotate(5deg);
+    }
+    50% {
+        transform: translateX(100px) rotate(10deg);
+        -webkit-transform: translateX(100px) rotate(10deg);
+        -moz-transform: translateX(100px) rotate(10deg);
+        -ms-transform: translateX(100px) rotate(10deg);
+    }
+    75% {
+        transform: translateX(50px) rotate(5deg);
+        -webkit-transform: translateX(50px) rotate(5deg);
+        -moz-transform: translateX(50px) rotate(5deg);
+        -ms-transform: translateX(50px) rotate(5deg);
+    }
+    100% {
+        transform: translateX(0) rotate(0deg);
+        -webkit-transform: translateX(0) rotate(0deg);
+        -moz-transform: translateX(0) rotate(0deg);
+        -ms-transform: translateX(0) rotate(0deg);
+    }
+}
+
+/* Safari/Chrome Specific */
+@-webkit-keyframes suitcaseRoll {
+    0% { -webkit-transform: translateX(0) rotate(0deg); }
+    25% { -webkit-transform: translateX(50px) rotate(5deg); }
+    50% { -webkit-transform: translateX(100px) rotate(10deg); }
+    75% { -webkit-transform: translateX(50px) rotate(5deg); }
+    100% { -webkit-transform: translateX(0) rotate(0deg); }
+}
+
+/* Firefox Specific */
+@-moz-keyframes suitcaseRoll {
+    0% { -moz-transform: translateX(0) rotate(0deg); }
+    25% { -moz-transform: translateX(50px) rotate(5deg); }
+    50% { -moz-transform: translateX(100px) rotate(10deg); }
+    75% { -moz-transform: translateX(50px) rotate(5deg); }
+    100% { -moz-transform: translateX(0) rotate(0deg); }
+}
+
+.animate-suitcase-roll {
+    animation: suitcaseRoll 3s ease-in-out;
+    -webkit-animation: suitcaseRoll 3s ease-in-out;
+    -moz-animation: suitcaseRoll 3s ease-in-out;
+    animation-iteration-count: 1;
+    -webkit-animation-iteration-count: 1;
+    -moz-animation-iteration-count: 1;
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* Responsive Animation for Mobile */
+@media (max-width: 768px) {
+    @keyframes suitcaseRoll {
+        0% { transform: translateX(0) rotate(0deg); }
+        25% { transform: translateX(30px) rotate(3deg); }
+        50% { transform: translateX(60px) rotate(6deg); }
+        75% { transform: translateX(30px) rotate(3deg); }
+        100% { transform: translateX(0) rotate(0deg); }
+    }
+    
+    @-webkit-keyframes suitcaseRoll {
+        0% { -webkit-transform: translateX(0) rotate(0deg); }
+        25% { -webkit-transform: translateX(30px) rotate(3deg); }
+        50% { -webkit-transform: translateX(60px) rotate(6deg); }
+        75% { -webkit-transform: translateX(30px) rotate(3deg); }
+        100% { -webkit-transform: translateX(0) rotate(0deg); }
+    }
+}
+
+/* Google Translate Styling */
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+.goog-te-gadget {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.goog-te-gadget-simple {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span {
+    color: #000 !important;
+}
+
+.goog-te-gadget-simple .goog-te-menu-value span:hover {
+    color: #DF6951 !important;
+}
+
+body {
+    top: 0 !important;
+}

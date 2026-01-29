@@ -90,7 +90,7 @@ const TopDestination = () => {
     }, [])
 
     return (
-        <section className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-20 px-6 my-20">
+        <section className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-20 px-6 my-12">
             <Text as="p" className="font-light text-base text-color3/80 tracking-widest">
                 {TopDestinationTexts.firstText}
             </Text>
@@ -99,7 +99,7 @@ const TopDestination = () => {
             </Text>
 
             {/* Controllers  */}
-            <div className="mt-12 w-full flex justify-end gap-5 items-center md:px-6 px-3">
+            <div className="mt-8 w-full flex justify-end gap-5 items-center md:px-6 px-3">
                 <Button onClick={previous} className="cursor-pointer outline-none border-none bg-color2/30 text-color3 hover:bg-color2 p-2 rounded-full" type="button">
                     <CaretLeft size={18} color="currentColor" weight="fill" />
                 </Button>
