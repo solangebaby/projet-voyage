@@ -4,6 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Button } from '../atoms/Button';
 import { Input } from '../atoms/Input';
+import AnimatedAgent from '../atoms/AnimatedAgent';
 import {
   Envelope,
   LockKey,
@@ -13,12 +14,15 @@ import {
   ArrowLeft,
 } from '@phosphor-icons/react';
 
+type AgentState = 'idle' | 'typing' | 'success' | 'error';
+
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [agentState, setAgentState] = useState<AgentState>('idle');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,10 +56,13 @@ const AdminLogin = () => {
       console.log('Role:', user.role); // DEBUG
 
       if (user.role !== 'admin') {
+        setAgentState('error');
         toast.error('Accès refusé. Connexion administrateur requise.');
+        setTimeout(() => setAgentState('idle'), 2000);
         return;
       }
 
+      setAgentState('success');
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       
@@ -66,11 +73,13 @@ const AdminLogin = () => {
       // Rediriger vers le dashboard admin
       setTimeout(() => {
         navigate('/admin/dashboard');
-      }, 500);
+      }, 1500);
     } catch (error: any) {
       console.error('Login error:', error); // DEBUG
+      setAgentState('error');
       const message = error.response?.data?.message || 'Erreur de connexion';
       toast.error(message);
+      setTimeout(() => setAgentState('idle'), 2000);
     } finally {
       setLoading(false);
     }
@@ -95,14 +104,17 @@ const AdminLogin = () => {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo & Title */}
         <div className="text-center mb-8 animate-slide-down">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl shadow-primary mb-4 animate-bounce-soft">
-            <ShieldCheck size={40} weight="duotone" className="text-white" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <AnimatedAgent state={agentState} className="transform scale-150" />
           </div>
           <h1 className="text-4xl font-bold text-dark mb-2">
             Espace Administrateur
           </h1>
           <p className="text-gray-600">
-            Connectez-vous pour accéder au dashboard
+            {agentState === 'typing' && 'Vérification en cours...'}
+            {agentState === 'success' && '✓ Authentification réussie !'}
+            {agentState === 'error' && '✗ Échec d\'authentification'}
+            {agentState === 'idle' && 'Connectez-vous pour accéder au dashboard'}
           </p>
         </div>
 
@@ -132,7 +144,14 @@ const AdminLogin = () => {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (e.target.value.length > 0 && agentState === 'idle') {
+                      setAgentState('typing');
+                    } else if (e.target.value.length === 0) {
+                      setAgentState('idle');
+                    }
+                  }}
                   leftIcon={<LockKey size={20} weight="duotone" />}
                   required
                   autoComplete="current-password"

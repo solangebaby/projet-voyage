@@ -106,4 +106,82 @@ class PdfController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Generate PDF for email attachment (returns PDF output instead of download response)
+     */
+    public function generateTicketPdfForEmail($ticketNumber)
+    {
+        $ticket = Ticket::with([
+            'reservation.user',
+            'reservation.trip.bus',
+            'reservation.trip.departure',
+            'reservation.trip.destination',
+            'reservation.trip.departureAgency',
+            'reservation.trip.arrivalAgency',
+            'reservation.payment'
+        ])->where('ticket_number', $ticketNumber)->first();
+
+        if (!$ticket) {
+            return null;
+        }
+
+        $reservation = $ticket->reservation;
+        $trip = $reservation->trip;
+
+        // Generate QR code
+        $qrCode = null;
+        try {
+            $qrValue = url('/api/tickets/'.$ticket->ticket_number);
+            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($qrValue);
+            $response = Http::timeout(5)->get($qrCodeUrl);
+            
+            if ($response->successful()) {
+                $qrCode = base64_encode($response->body());
+            }
+        } catch (\Throwable $e) {
+            Log::error('QR code generation failed', ['error' => $e->getMessage()]);
+        }
+
+        $data = [
+            'ticketNumber' => $ticket->ticket_number,
+            'passengerFirstName' => $reservation->passenger_first_name ?? explode(' ', $reservation->passenger_name)[0] ?? 'N/A',
+            'passengerLastName' => $reservation->passenger_last_name ?? explode(' ', $reservation->passenger_name)[1] ?? 'N/A',
+            'passengerNationality' => $reservation->passenger_nationality ?? 'N/A',
+            'passengerGender' => $reservation->passenger_gender === 'M' ? 'Male' : ($reservation->passenger_gender === 'F' ? 'Female' : 'N/A'),
+            'passengerCNI' => $reservation->passenger_cni ?? 'N/A',
+            'passengerPhone' => $reservation->passenger_phone ?? 'N/A',
+            'passengerEmail' => $reservation->passenger_email ?? 'N/A',
+            'departureCity' => $trip->departure->city_name,
+            'destinationCity' => $trip->destination->city_name,
+            'departureAgency' => $trip->departureAgency->neighborhood ?? 'Main Station',
+            'arrivalAgency' => $trip->arrivalAgency->neighborhood ?? 'Main Station',
+            'travelDate' => \Carbon\Carbon::parse($trip->departure_date)->format('l, F j, Y'),
+            'departureTime' => \Carbon\Carbon::parse($trip->departure_time)->format('h:i A'),
+            'arrivalTime' => \Carbon\Carbon::parse($trip->arrival_time)->format('h:i A'),
+            'seatNumber' => $reservation->selected_seat,
+            'busType' => $trip->bus->type ?? 'Standard',
+            'busName' => $trip->bus->bus_name ?? 'N/A',
+            'busMatricule' => $trip->bus->matricule ?? 'N/A',
+            'amount' => $reservation->payment->amount ?? $trip->price ?? 0,
+            'paymentMethod' => $reservation->payment->method ?? 'N/A',
+            'transactionRef' => $reservation->payment->transaction_reference ?? 'N/A',
+            'qrCode' => $qrCode,
+        ];
+
+        try {
+            $pdf = Pdf::loadView('tickets.pdf_professional', $data);
+            if (method_exists($pdf, 'setOption')) {
+                $pdf->setOption('isRemoteEnabled', true);
+            }
+            $pdf->setPaper('A4', 'portrait');
+            return $pdf->output(); // Returns raw PDF content
+        } catch (\Throwable $e) {
+            Log::error('PDF generation for email failed', [
+                'ticket' => $ticketNumber,
+                'error' => $e->getMessage(),
+            ]);
+            return null;
+        }
+    }
 }

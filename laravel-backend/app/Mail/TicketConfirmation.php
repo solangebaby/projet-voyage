@@ -83,10 +83,15 @@ class TicketConfirmation extends Mailable
         // Attach the PDF ticket
         try {
             $pdfController = new \App\Http\Controllers\PdfController();
-            $pdf = $pdfController->generateTicketPdf($this->ticket->ticket_number);
+            $pdfContent = $pdfController->generateTicketPdfForEmail($this->ticket->ticket_number);
             
-            // Note: This returns a download response, we need to modify the controller
-            // For now, return empty array
+            if ($pdfContent) {
+                return [
+                    Attachment::fromData(fn () => $pdfContent, 'KCTrip_Ticket_' . $this->ticket->ticket_number . '.pdf')
+                        ->withMime('application/pdf')
+                ];
+            }
+            
             return [];
         } catch (\Exception $e) {
             \Log::error('Failed to attach ticket PDF', ['error' => $e->getMessage()]);

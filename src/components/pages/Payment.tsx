@@ -91,6 +91,14 @@ const Payment = () => {
       return
     }
 
+    // Confirmation dialog
+    const confirmMessage = `Vous êtes sur le point de payer ${formatPrice(totalPrice)} pour votre réservation.\n\nDétails:\n- Route: ${departure} → ${destination}\n- Siège(s): ${selectedSeats.join(', ')}\n- Type: ${ticketType === 'vip' ? 'VIP ⭐' : 'Standard'}\n\nVoulez-vous continuer?`
+    
+    if (!window.confirm(confirmMessage)) {
+      toast.info('Paiement annulé')
+      return
+    }
+
     // Validation: vérifier la correspondance opérateur/numéro
     if (paymentMethod === 'mobile_money' && mobileProvider) {
       const detectedOperator = detectOperator(passengerInfo.phone)

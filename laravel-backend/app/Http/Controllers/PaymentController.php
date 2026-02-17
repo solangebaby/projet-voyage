@@ -124,6 +124,15 @@ class PaymentController extends Controller
                 ], 400);
             }
             
+            // SIMULATION: Refuser les paiements dépassant 50,000 FCFA (simule un solde insuffisant)
+            if ($amount > 50000) {
+                \Log::warning("Payment simulation: Amount {$amount} FCFA exceeds threshold. Simulating insufficient balance.");
+                return response()->json([
+                    'success' => false,
+                    'message' => "Solde insuffisant. Le montant de {$amount} FCFA dépasse votre solde disponible. Veuillez recharger votre compte ou utiliser un autre mode de paiement."
+                ], 400);
+            }
+            
             // Create payment record
             $reference = 'REF-' . strtoupper(Str::random(10));
             

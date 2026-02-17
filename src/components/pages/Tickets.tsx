@@ -85,6 +85,30 @@ const TicketDetails = () => {
     <>
       <NavBar />
       <div className="min-h-screen pt-20 bg-gradient-to-br from-neutral-50 via-primary-50 to-neutral-50 py-2">
+        {/* Bus Animation */}
+        <div className="relative overflow-hidden h-16 mb-4 bg-white/50">
+          <div className="absolute top-1/2 -translate-y-1/2 animate-[slideInBus_4s_ease-in-out_infinite]">
+            <svg width="80" height="50" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="15" width="80" height="30" rx="5" fill="#F97316" />
+              <rect x="15" y="20" width="15" height="10" rx="2" fill="#E0F2FE" />
+              <rect x="35" y="20" width="15" height="10" rx="2" fill="#E0F2FE" />
+              <rect x="55" y="20" width="15" height="10" rx="2" fill="#E0F2FE" />
+              <rect x="75" y="20" width="10" height="10" rx="2" fill="#E0F2FE" />
+              <circle cx="25" cy="45" r="8" fill="#1F2937" />
+              <circle cx="75" cy="45" r="8" fill="#1F2937" />
+              <circle cx="25" cy="45" r="4" fill="#6B7280" />
+              <circle cx="75" cy="45" r="4" fill="#6B7280" />
+              <circle cx="88" cy="25" r="3" fill="#FDE047" />
+            </svg>
+          </div>
+        </div>
+        <style>{`
+          @keyframes slideInBus {
+            0% { left: -100px; }
+            100% { left: calc(100% + 100px); }
+          }
+        `}</style>
+        
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
           {/* Header */}
           <div className="bg-white rounded-lg shadow-sm p-3 mb-3 border border-primary">

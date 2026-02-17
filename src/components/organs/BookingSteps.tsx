@@ -55,7 +55,11 @@ const BookingSteps = () => {
 
         <div className="bg-white shadow-lg rounded-2xl p-6 ml-12">
           <div className="flex items-center gap-4 mb-3">
-            <div className="w-12 h-12 rounded-full bg-gray-200"></div>
+            <img 
+              src={CardImage2} 
+              alt="Traveler" 
+              className="w-12 h-12 rounded-full object-cover border-2 border-color2"
+            />
             <div>
               <Text as="p" className="text-sm text-color3/70">
                 {BookingStepsTexts.cardTwo.status}
@@ -72,12 +76,6 @@ const BookingSteps = () => {
             <div className="w-2/5 h-full bg-color2 rounded-full"></div>
           </div>
         </div>
-
-        <img
-          src={CardImage2}
-          alt="Traveler"
-          className="hidden"
-        />
       </main>
     </section>
   );

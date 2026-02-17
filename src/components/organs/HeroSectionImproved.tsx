@@ -146,11 +146,11 @@ const HeroSectionImproved = () => {
   };
 
   return (
-    <div className="relative w-full min-h-[70vh] lg:min-h-[80vh] overflow-hidden py-16 lg:py-20">
+    <div className="relative w-full min-h-[70vh] lg:min-h-[80vh] overflow-hidden py-8 lg:py-12">
       <Image image={bgImage} alt="bg-image" className="absolute top-0 right-0 w-[60%] lg:w-[45%] h-full object-cover -z-10" />
 
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[60vh]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center min-h-[40vh]">
           <Fade direction="left" triggerOnce>
             <div className="space-y-4 lg:space-y-6">
               {HeroTexts.firstText && (
@@ -217,7 +217,7 @@ const HeroSectionImproved = () => {
 
         {/* Compact Booking Form */}
         <Fade direction="up" delay={300} triggerOnce>
-          <div id="booking" className="mt-8 lg:mt-12 bg-white rounded-2xl shadow-xl p-4 md:p-6 max-w-4xl mx-auto">
+          <div id="booking" className="mt-4 lg:mt-6 bg-white rounded-2xl shadow-xl p-4 md:p-6 max-w-4xl mx-auto">
             {!showAgencySelection ? (
               <>
                 <h3 className="text-lg md:text-xl font-semibold text-color3 mb-4 text-center">Quick Booking</h3>
@@ -254,10 +254,12 @@ const HeroSectionImproved = () => {
 
                   {/* Sélection rapide de dates */}
                   <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-1.5">
                       {[
                         { label: "Aujourd'hui", days: 0 },
-                        { label: "Demain", days: 1 }
+                        { label: "Demain", days: 1 },
+                        { label: "+2j", days: 2 },
+                        { label: "+3j", days: 3 }
                       ].map((option) => {
                         const optionDate = new Date();
                         optionDate.setDate(optionDate.getDate() + option.days);
@@ -267,7 +269,7 @@ const HeroSectionImproved = () => {
                             key={option.days}
                             type="button"
                             onClick={() => setDate(dateStr)}
-                            className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all ${
+                            className={`px-2 py-1.5 rounded-md text-[10px] font-semibold transition-all ${
                               date === dateStr
                                 ? 'bg-color2 text-white shadow-md'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
