@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import NavBar from '../organs/NavBar';
+import Footer from '../organs/Footer';
 import {
   Ticket,
   DownloadSimple,
@@ -149,17 +151,23 @@ const TravelerDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-color2 mx-auto"></div>
-          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
+      <>
+        <NavBar />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-20">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-color2 mx-auto"></div>
+            <p className="mt-4 text-gray-600">{t('common.loading')}</p>
+          </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <>
+      <NavBar />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 pt-20">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -460,7 +468,9 @@ const TravelerDashboard = () => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

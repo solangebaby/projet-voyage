@@ -88,7 +88,7 @@ const Register = () => {
         <div className="flex justify-center mb-6">
           <Image
             image={Logo}
-            alt="Jadoo Travels"
+            alt="KCTrip"
             className="w-24 h-24 object-contain"
           />
         </div>

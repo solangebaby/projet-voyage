@@ -4,6 +4,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Animations personnalisées */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
 /* @layer components {
     .pseudoBefore {
         @apply relative z-10 before: absolute before:-z-10 before:content-[''];
@@ -141,4 +157,26 @@
 
 body {
     top: 0 !important;
+}
+
+/* Floating Bus Animation */
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(0);
+        -webkit-transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+        -webkit-transform: translateY(-15px);
+    }
+}
+
+@-webkit-keyframes bounce-slow {
+    0%, 100% { -webkit-transform: translateY(0); }
+    50% { -webkit-transform: translateY(-15px); }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+    -webkit-animation: bounce-slow 2s ease-in-out infinite;
 }

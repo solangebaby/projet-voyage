@@ -14,9 +14,12 @@ class TicketController extends Controller
     {
         $ticket = Ticket::with([
             'reservation.user',
+            'reservation.payment',
             'reservation.trip.bus',
             'reservation.trip.departure',
-            'reservation.trip.destination'
+            'reservation.trip.destination',
+            'reservation.trip.departureAgency',
+            'reservation.trip.arrivalAgency'
         ])->where('ticket_number', $ticketNumber)->first();
 
         if (!$ticket) {
@@ -48,7 +51,9 @@ class TicketController extends Controller
         $tickets = Ticket::with([
             'reservation.trip.bus',
             'reservation.trip.departure',
-            'reservation.trip.destination'
+            'reservation.trip.destination',
+            'reservation.trip.departureAgency',
+            'reservation.trip.arrivalAgency'
         ])
         ->whereHas('reservation', function($query) use ($userId) {
             $query->where('user_id', $userId);
@@ -59,6 +64,32 @@ class TicketController extends Controller
         return response()->json([
             'success' => true,
             'data' => $tickets
+        ]);
+    }
+
+    /**
+     * Mark ticket as downloaded
+     */
+    public function markAsDownloaded(string $ticketNumber)
+    {
+        $ticket = Ticket::where('ticket_number', $ticketNumber)->first();
+
+        if (!$ticket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket not found'
+            ], 404);
+        }
+
+        if (!$ticket->downloaded_at) {
+            $ticket->downloaded_at = now();
+            $ticket->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Ticket marked as downloaded',
+            'data' => $ticket
         ]);
     }
 }

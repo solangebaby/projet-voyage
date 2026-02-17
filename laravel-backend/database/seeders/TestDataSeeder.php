@@ -92,15 +92,15 @@ class TestDataSeeder extends Seeder
         $this->command->info('👥 Creating users...');
         
         // Admin (si n'existe pas déjà)
-        if (!User::where('email', 'admin@jadoo.com')->exists()) {
+        if (!User::where('email', 'admin@kctrip.com')->exists()) {
             User::create([
-                'name' => 'Admin Jadoo',
-                'email' => 'admin@jadoo.com',
+                'name' => 'Admin KCTrip',
+                'email' => 'admin@kctrip.com',
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
                 'phone' => '+237 6XX XXX XXX'
             ]);
-            $this->command->info('✅ Created admin user (email: admin@jadoo.com, password: admin123)');
+            $this->command->info('✅ Created admin user (email: admin@kctrip.com, password: admin123)');
         }
 
         // Voyageurs de test
@@ -206,7 +206,7 @@ class TestDataSeeder extends Seeder
         $this->command->info('   - Reservations: ' . Reservation::count());
         $this->command->info('');
         $this->command->info('🔐 Login Credentials:');
-        $this->command->info('   Admin: admin@jadoo.com / admin123');
+        $this->command->info('   Admin: admin@kctrip.com / admin123');
         $this->command->info('   User: jean@example.com / password');
         $this->command->info('');
     }

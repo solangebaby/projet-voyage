@@ -1,8 +1,8 @@
 <img src="https://github.com/Signor1/jadoo-travels/blob/25638627b142935345059e6bfcc32bc829629c20/Jadoo-Travel-Agency.png"/>
 
-# Jadoo Travel Agency Landing Page
+# KCTrip - Bus Ticket Booking System
 
-This project is a landing page for Jadoo Travel Agency built using React, TypeScript, and Vite.
+This project is a comprehensive bus ticket booking system for KCTrip built using React, TypeScript, Vite, and Laravel backend.
 
 ## Features
 
@@ -10,7 +10,9 @@ This project is a landing page for Jadoo Travel Agency built using React, TypeSc
 - Responsive layout for various screen sizes
 - Smooth scrolling navigation
 - Interactive components and animations
-- Information about Jadoo Travel Agency services
+- Complete bus ticket booking system with seat selection
+- Admin dashboard for managing cities, routes, buses, and voyages
+- User dashboard for managing reservations and tickets
 
 ## Technologies Used
 
@@ -36,13 +38,13 @@ This project is a landing page for Jadoo Travel Agency built using React, TypeSc
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/jadoo-travel-agency.git
+   git clone https://github.com/your-username/kctrip.git
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd jadoo-travel-agency
+   cd kctrip
    ```
 
 3. Install the dependencies:
@@ -86,15 +88,15 @@ The project structure follows a standard React application structure:
 
 ## Deployment
 
-To deploy the Jadoo Travel Agency landing page, you can follow the deployment instructions specific to your chosen hosting platform (e.g., Netlify, Vercel, GitHub Pages, etc.). Typically, you need to build the project and configure the hosting platform to serve the generated files.
+To deploy the KCTrip application, you can follow the deployment instructions specific to your chosen hosting platform (e.g., Netlify, Vercel, GitHub Pages, etc.). Typically, you need to build the project and configure the hosting platform to serve the generated files.
+
+## Backend Setup
+
+The Laravel backend is located in the `laravel-backend` folder. See the backend README for setup instructions.
 
 ## Credits
 
-This project was developed by [SignorDev](https://github.com/signor1). It was created as a sample landing page for a travel agency based on the Jadoo brand.
+This project was developed as a comprehensive bus ticket booking system for KCTrip, a transportation company operating in Cameroon.
 
-## Demo
-
-[View Project](https://jadoo-tour.vercel.app)
-
-Feel free to explore the code, customize it, and use it as a foundation for your own projects. Happy traveling with Jadoo Travel Agency!
+Feel free to explore the code, customize it, and use it as a foundation for your own projects. Happy traveling with KCTrip!
 # react-booking

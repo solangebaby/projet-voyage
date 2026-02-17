@@ -23,11 +23,14 @@ import {
   Bus,
   MapPin,
   Ticket,
-  CurrencyDollar,
   ChartLine,
   ChatCircleDots,
   Calendar,
   SignOut,
+  ShieldCheck,
+  Money,
+  Coins,
+  CurrencyDollar,
 } from '@phosphor-icons/react';
 import AdminCommentModeration from '../AdminCommentModeration';
 
@@ -119,27 +122,37 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-soft border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.admin.title')}</h1>
-              <p className="text-sm text-gray-500 mt-1">{t('common.welcome')}, {user.first_name || user.name}</p>
-            </div>
+          <div className="flex justify-between items-center py-6">
             <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-xl shadow-primary flex items-center justify-center">
+                <ShieldCheck size={28} weight="duotone" className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  {t('dashboard.admin.title')}
+                </h1>
+                <p className="text-sm text-gray-600 mt-1 flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 bg-success rounded-full animate-pulse"></span>
+                  {t('common.welcome')}, <span className="font-semibold text-dark">{user.first_name || user.name}</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate('/')}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-color2 transition"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary-50 rounded-lg transition-all duration-300"
               >
                 {t('nav.home')}
               </button>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-danger to-danger-dark text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300"
               >
-                <SignOut size={20} />
+                <SignOut size={20} weight="bold" />
                 {t('common.logout')}
               </button>
             </div>
@@ -148,26 +161,30 @@ const AdminDashboard = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-white shadow-soft border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-2 overflow-x-auto">
             {[
-              { key: 'overview', label: t('dashboard.admin.overview'), icon: ChartLine },
-              { key: 'trips', label: t('dashboard.admin.manageTrips'), icon: Calendar },
-              { key: 'buses', label: t('dashboard.admin.manageBuses'), icon: Bus },
-              { key: 'destinations', label: t('dashboard.admin.manageDestinations'), icon: MapPin },
-              { key: 'comments', label: t('dashboard.admin.manageComments'), icon: ChatCircleDots },
+              { key: 'overview', label: t('dashboard.admin.overview'), icon: ChartLine, color: 'primary' },
+              { key: 'trips', label: t('dashboard.admin.manageTrips'), icon: Calendar, color: 'secondary' },
+              { key: 'buses', label: t('dashboard.admin.manageBuses'), icon: Bus, color: 'success' },
+              { key: 'destinations', label: t('dashboard.admin.manageDestinations'), icon: MapPin, color: 'info' },
+              { key: 'comments', label: t('dashboard.admin.manageComments'), icon: ChatCircleDots, color: 'warning' },
             ].map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as any)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition whitespace-nowrap ${
+                className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-3 transition-all duration-300 whitespace-nowrap group ${
                   activeTab === tab.key
-                    ? 'border-color2 text-color2'
-                    : 'border-transparent text-gray-600 hover:text-gray-900'
+                    ? `border-${tab.color} text-${tab.color} bg-${tab.color}-50`
+                    : 'border-transparent text-gray-600 hover:text-dark hover:bg-neutral-50'
                 }`}
               >
-                <tab.icon size={20} />
+                <tab.icon 
+                  size={22} 
+                  weight={activeTab === tab.key ? 'duotone' : 'regular'} 
+                  className="group-hover:scale-110 transition-transform"
+                />
                 {tab.label}
               </button>
             ))}
@@ -209,30 +226,30 @@ const AdminDashboard = () => {
 
             {/* Revenue Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+              <div className="bg-gradient-to-br from-success-50 to-success-100 rounded-2xl shadow-soft p-6 border-l-4 border-success hover:shadow-medium transition-all duration-300 group">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">{t('dashboard.admin.totalRevenue')}</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm text-success-700 font-semibold mb-2">{t('dashboard.admin.totalRevenue')}</p>
+                    <p className="text-4xl font-bold text-success-900 group-hover:scale-105 transition-transform">
                       {stats.overview.total_revenue.toLocaleString()} FCFA
                     </p>
                   </div>
-                  <div className="p-4 bg-green-100 rounded-full">
-                    <CurrencyDollar size={32} className="text-green-600" weight="duotone" />
+                  <div className="p-4 bg-gradient-to-br from-success to-success-dark rounded-2xl shadow-success group-hover:rotate-12 transition-transform">
+                    <Money size={36} className="text-white" weight="duotone" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
+              <div className="bg-gradient-to-br from-info-50 to-info-100 rounded-2xl shadow-soft p-6 border-l-4 border-info hover:shadow-medium transition-all duration-300 group">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">{t('dashboard.admin.monthlyRevenue')}</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">
+                    <p className="text-sm text-info-700 font-semibold mb-2">{t('dashboard.admin.monthlyRevenue')}</p>
+                    <p className="text-4xl font-bold text-info-900 group-hover:scale-105 transition-transform">
                       {stats.overview.monthly_revenue.toLocaleString()} FCFA
                     </p>
                   </div>
-                  <div className="p-4 bg-blue-100 rounded-full">
-                    <CurrencyDollar size={32} className="text-blue-600" weight="duotone" />
+                  <div className="p-4 bg-gradient-to-br from-info to-info-dark rounded-2xl shadow-info group-hover:rotate-12 transition-transform">
+                    <Coins size={36} className="text-white" weight="duotone" />
                   </div>
                 </div>
               </div>
@@ -241,8 +258,11 @@ const AdminDashboard = () => {
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Bookings Chart */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Bookings Trend (Last 6 Months)</h3>
+              <div className="bg-white rounded-2xl shadow-soft p-6 border border-neutral-100 hover:shadow-medium transition-all">
+                <h3 className="text-lg font-bold text-dark mb-4 flex items-center gap-2">
+                  <div className="w-2 h-8 bg-gradient-to-b from-secondary to-secondary-dark rounded-full"></div>
+                  Bookings Trend (Last 6 Months)
+                </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={stats.charts.bookings_by_month}>
                     <defs>
@@ -261,8 +281,11 @@ const AdminDashboard = () => {
               </div>
 
               {/* Revenue Chart */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend (Last 6 Months)</h3>
+              <div className="bg-white rounded-2xl shadow-soft p-6 border border-neutral-100 hover:shadow-medium transition-all">
+                <h3 className="text-lg font-bold text-dark mb-4 flex items-center gap-2">
+                  <div className="w-2 h-8 bg-gradient-to-b from-primary to-primary-dark rounded-full"></div>
+                  Revenue Trend (Last 6 Months)
+                </h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={stats.charts.revenue_by_month}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -287,7 +310,7 @@ const AdminDashboard = () => {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ city_name, booking_count }) => `${city_name}: ${booking_count}`}
+                      label={(props: any) => `${props.city_name}: ${props.booking_count}`}
                       outerRadius={100}
                       fill="#8884d8"
                       dataKey="booking_count"
@@ -380,53 +403,128 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'trips' && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Gestion des Voyages</h3>
-            <p className="text-gray-600 mb-4">Créez et gérez les voyages disponibles à la vente</p>
-            <button 
-              onClick={() => window.location.href = '/admin/voyages'}
-              className="px-4 py-2 bg-color2 text-white rounded-lg hover:bg-color3"
-            >
-              Accéder à la gestion des voyages
-            </button>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-dark mb-6">Trip Management</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <button
+                onClick={() => window.location.href = '/admin/voyages'}
+                className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 border-l-4 border-secondary text-left group"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-4 bg-gradient-to-br from-secondary to-secondary-dark rounded-xl shadow-secondary group-hover:rotate-12 transition-transform">
+                    <Calendar size={32} className="text-white" weight="duotone" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-dark">Trip Planning</h3>
+                    <p className="text-sm text-gray-500 mt-1">Créer et gérer les voyages</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => window.location.href = '/admin/tarifs'}
+                className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 border-l-4 border-primary text-left group"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-4 bg-gradient-to-br from-primary to-primary-dark rounded-xl shadow-primary group-hover:rotate-12 transition-transform">
+                    <CurrencyDollar size={32} className="text-white" weight="duotone" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-dark">Fare Management</h3>
+                    <p className="text-sm text-gray-500 mt-1">Définir les prix</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => window.location.href = '/admin/reservations'}
+                className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 border-l-4 border-success text-left group"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-4 bg-gradient-to-br from-success to-success-dark rounded-xl shadow-success group-hover:rotate-12 transition-transform">
+                    <Ticket size={32} className="text-white" weight="duotone" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-dark">Reservations</h3>
+                    <p className="text-sm text-gray-500 mt-1">Gérer les réservations</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => window.location.href = '/admin/payments'}
+                className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 border-l-4 border-info text-left group"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-4 bg-gradient-to-br from-info to-info-dark rounded-xl shadow-info group-hover:rotate-12 transition-transform">
+                    <CurrencyDollar size={32} className="text-white" weight="duotone" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-dark">{t('admin.payments.title')}</h3>
+                    <p className="text-sm text-gray-500 mt-1">Gérer les paiements</p>
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         )}
 
         {activeTab === 'buses' && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Gestion de la Flotte</h3>
-            <p className="text-gray-600 mb-4">Gérez vos bus et leur configuration</p>
-            <button 
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-dark mb-6">Fleet Management</h2>
+            
+            <button
               onClick={() => window.location.href = '/admin/buses'}
-              className="px-4 py-2 bg-color2 text-white rounded-lg hover:bg-color3"
+              className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 border-l-4 border-success text-left group w-full"
             >
-              Accéder à la gestion des bus
+              <div className="flex items-center gap-4">
+                <div className="p-4 bg-gradient-to-br from-success to-success-dark rounded-xl shadow-success group-hover:rotate-12 transition-transform">
+                  <Bus size={32} className="text-white" weight="duotone" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-dark">Bus Management</h3>
+                  <p className="text-sm text-gray-500 mt-1">Gérez vos bus et leur configuration</p>
+                </div>
+              </div>
             </button>
           </div>
         )}
 
         {activeTab === 'destinations' && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Gestion des Villes & Trajets</h3>
-            <div className="space-y-4">
-              <div>
-                <p className="text-gray-600 mb-2">Gérez les villes pour les trajets</p>
-                <button 
-                  onClick={() => window.location.href = '/admin/cities'}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                >
-                  Gestion des Villes
-                </button>
-              </div>
-              <div>
-                <p className="text-gray-600 mb-2">Gérez les trajets entre villes</p>
-                <button 
-                  onClick={() => window.location.href = '/admin/routes'}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                >
-                  Gestion des Trajets
-                </button>
-              </div>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-dark mb-6">Cities & Routes Management</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <button
+                onClick={() => window.location.href = '/admin/cities'}
+                className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 border-l-4 border-info text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-gradient-to-br from-info to-info-dark rounded-xl shadow-info group-hover:rotate-12 transition-transform">
+                    <MapPin size={32} className="text-white" weight="duotone" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-dark">City Management</h3>
+                    <p className="text-sm text-gray-500 mt-1">Gérez les villes pour les trajets</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => window.location.href = '/admin/routes'}
+                className="bg-white p-8 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-105 border-l-4 border-success text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-gradient-to-br from-success to-success-dark rounded-xl shadow-success group-hover:rotate-12 transition-transform">
+                    <MapPin size={32} className="text-white" weight="duotone" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-dark">Route Management</h3>
+                    <p className="text-sm text-gray-500 mt-1">Gérez les trajets entre villes</p>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         )}
@@ -448,15 +546,21 @@ interface StatCardProps {
 }
 
 const StatCard = ({ title, value, icon: Icon, color }: StatCardProps) => {
+  // Extract color name from class (e.g., 'bg-blue-500' -> 'blue')
+  const colorName = color.includes('blue') ? 'blue' : 
+                    color.includes('green') ? 'success' :
+                    color.includes('purple') ? 'secondary' :
+                    color.includes('orange') ? 'primary' : 'primary';
+                    
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition">
+    <div className="bg-white rounded-2xl shadow-soft p-6 hover:shadow-medium hover:scale-105 transition-all duration-300 border border-neutral-100 group">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
+          <p className="text-sm text-gray-500 mb-2 font-medium">{title}</p>
+          <p className="text-4xl font-bold text-dark group-hover:scale-110 transition-transform">{value}</p>
         </div>
-        <div className={`p-4 ${color} rounded-full`}>
-          <Icon size={28} className="text-white" weight="duotone" />
+        <div className={`p-4 bg-gradient-to-br ${color} to-${colorName}-600 rounded-2xl shadow-${colorName} group-hover:rotate-12 transition-transform duration-300`}>
+          <Icon size={32} className="text-white" weight="duotone" />
         </div>
       </div>
     </div>

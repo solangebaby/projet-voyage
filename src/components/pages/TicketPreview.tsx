@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { 
   Ticket as TicketIcon, 
   User, 
@@ -98,7 +98,7 @@ const TicketPreview = () => {
               <div className="flex items-center gap-3">
                 <TicketIcon size={32} weight="duotone" />
                 <div>
-                  <p className="text-sm opacity-90">Jadoo Travels</p>
+                  <p className="text-sm opacity-90">KCTrip</p>
                   <p className="text-2xl font-bold">{t('ticket.ticketNumber')}</p>
                 </div>
               </div>
@@ -222,12 +222,11 @@ const TicketPreview = () => {
                 <div className="bg-white border-4 border-dashed border-color2 rounded-xl p-6 text-center">
                   <p className="text-sm font-semibold text-gray-700 mb-3">Ticket QR Code</p>
                   <div className="flex justify-center">
-                    <QRCode 
+                    <QRCodeSVG 
                       value={ticketNumber} 
                       size={180}
                       level="H"
                       includeMargin={true}
-                      renderAs="svg"
                     />
                   </div>
                   <p className="text-xs text-gray-500 mt-3">{t('ticket.scanQR')}</p>

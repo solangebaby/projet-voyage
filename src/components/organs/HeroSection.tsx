@@ -15,8 +15,8 @@ const HeroSection = () => {
   const navigate = useNavigate()
 
   const [destinations, setDestinations] = useState<Destination[]>([])
-  const [departure, setDeparture] = useState("")
-  const [destination, setDestination] = useState("")
+  const [departure, setDeparture] = useState<string>("")
+  const [destination, setDestination] = useState<string>("")
   const [date, setDate] = useState("")
   const [loading, setLoading] = useState(false)
   const [loadingCities, setLoadingCities] = useState(true)
@@ -88,12 +88,16 @@ const HeroSection = () => {
 
       toast.success(`Found ${trips.length} available trip(s)!`)
       
+      // Get city names for display
+      const departureCity = destinations.find(d => d.id.toString() === departure)?.city_name || "Unknown";
+      const destinationCity = destinations.find(d => d.id.toString() === destination)?.city_name || "Unknown";
+      
       setTimeout(() => {
         navigate("/ticket-details", { 
           state: { 
             trips,
-            departure, 
-            destination, 
+            departure: departureCity, 
+            destination: destinationCity, 
             date
           } 
         })
@@ -114,16 +118,16 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="w-full lg:h-[85vh] md:h-[550px] h-[800px] relative overflow-hidden flex justify-end">
+    <section className="w-full min-h-screen lg:h-screen relative overflow-hidden py-20">
       {/* Background */}
       <Image
-        className="h-[60%] w-[80%] lg:h-[90vh] md:h-[50vh] lg:w-1/2 md:w-[55%] absolute right-0 top-0"
+        className="h-[70%] w-[50%] lg:h-[85%] lg:w-[45%] md:h-[60%] md:w-[50%] absolute right-0 top-0 -z-10"
         image={bgImage}
         alt="Hero Background Vector"
       />
 
-      <main className="w-full h-full grid md:grid-cols-2 grid-cols-1 relative z-10 lg:px-24 md:px-8 px-5 lg:gap-8 md:gap-6 gap-4">
-        <div className="flex flex-col justify-center items-start gap-4 md:order-1 order-2 relative lg:left-10 mt-12 md:mt-16 lg:mt-20">
+      <main className="container mx-auto h-full grid md:grid-cols-2 grid-cols-1 gap-8 px-6 lg:px-12 items-center">
+        <div className="flex flex-col justify-center items-start gap-4 md:order-1 order-2">
           <div className="flex flex-col gap-2 max-w-lg w-full">
             <Fade>
               <Text as="p" className="text-color1 uppercase tracking-widest lg:text-base md:text-sm text-xs font-normal">
@@ -177,7 +181,7 @@ const HeroSection = () => {
                   >
                     <option value="">From</option>
                     {destinations.map((d) => (
-                      <option key={d.id} value={d.city_name}>{d.city_name}</option>
+                      <option key={d.id} value={d.id}>{d.city_name}</option>
                     ))}
                   </select>
 
@@ -189,9 +193,9 @@ const HeroSection = () => {
                   >
                     <option value="">To</option>
                     {destinations
-                      .filter((d) => d.city_name !== departure)
+                      .filter((d) => d.id.toString() !== departure)
                       .map((d) => (
-                        <option key={d.id} value={d.city_name}>{d.city_name}</option>
+                        <option key={d.id} value={d.id}>{d.city_name}</option>
                       ))}
                   </select>
 
@@ -224,7 +228,7 @@ const HeroSection = () => {
                   >
                     <option value="">From</option>
                     {destinations.map((d) => (
-                      <option key={d.id} value={d.city_name}>{d.city_name}</option>
+                      <option key={d.id} value={d.id}>{d.city_name}</option>
                     ))}
                   </select>
 
@@ -236,9 +240,9 @@ const HeroSection = () => {
                   >
                     <option value="">To</option>
                     {destinations
-                      .filter((d) => d.city_name !== departure)
+                      .filter((d) => d.id.toString() !== departure)
                       .map((d) => (
-                        <option key={d.id} value={d.city_name}>{d.city_name}</option>
+                        <option key={d.id} value={d.id}>{d.city_name}</option>
                       ))}
                   </select>
 
@@ -265,12 +269,12 @@ const HeroSection = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center md:justify-end md:order-2 order-1 md:pt-0 pt-8">
+        <div className="flex items-center justify-center md:justify-end md:order-2 order-1">
           <Slide direction="right">
             <Image
               image={heroImage}
               alt="Hero Image"
-              className="lg:h-[85%] lg:w-[92%] md:h-[90%] md:w-full w-[85%] h-auto max-h-[400px] md:max-h-none object-contain"
+              className="w-full max-w-[180px] lg:max-w-[240px] md:max-w-[210px] h-auto object-contain"
             />
           </Slide>
         </div>

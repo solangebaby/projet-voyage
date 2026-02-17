@@ -1,6 +1,6 @@
-# Jadoo Travels - Laravel 10 Backend API
+# Finexs Voyage - Laravel 10 Backend API
 
-Complete Laravel 10 + MySQL backend for the Jadoo Travels booking system.
+Complete Laravel 10 + MySQL backend for the Finexs Voyage bus ticket booking system.
 
 ## 🚀 Features
 
@@ -23,7 +23,7 @@ Complete Laravel 10 + MySQL backend for the Jadoo Travels booking system.
 
 ### 1. Install Dependencies
 ```bash
-cd jadoo-travels/laravel-backend
+cd finexs-voyage/laravel-backend
 composer install
 ```
 
@@ -35,13 +35,13 @@ php artisan key:generate
 
 Update `.env` file:
 ```env
-APP_NAME="Jadoo Travels"
+APP_NAME="Finexs Voyage"
 APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=jadoo_travels
+DB_DATABASE=finexs_voyage
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -51,7 +51,7 @@ SANCTUM_STATEFUL_DOMAINS=localhost:5173,localhost:3000
 ### 3. Create Database
 ```bash
 mysql -u root -p
-CREATE DATABASE jadoo_travels;
+CREATE DATABASE finexs_voyage;
 exit;
 ```
 
@@ -66,7 +66,7 @@ php artisan db:seed
 ```
 
 This creates:
-- Admin user: `admin@jadoo.com` / `admin123`
+- Admin user: `admin@finexsvoyage.com` / `admin123`
 - Test user: `jean@example.com` / `password`
 - Sample destinations, buses, and trips
 
@@ -115,7 +115,7 @@ POST /api/login
 Content-Type: application/json
 
 {
-  "email": "admin@jadoo.com",
+  "email": "admin@finexsvoyage.com",
   "password": "admin123"
 }
 
@@ -444,7 +444,7 @@ Get token from login response and store in frontend.
 ## 🧪 Testing
 
 ### Test Accounts
-- Admin: `admin@jadoo.com` / `admin123`
+- Admin: `admin@finexsvoyage.com` / `admin123`
 - User: `jean@example.com` / `password`
 
 ### Test API with Postman

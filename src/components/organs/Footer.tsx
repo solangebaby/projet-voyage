@@ -1,5 +1,5 @@
 import { Image } from "../atoms/Image"
-import logo from "../../assets/logo2.png"
+import logo from "../../assets/logo3.jpg"
 import { Text } from "../atoms/Text"
 import { FooterTexts } from "../particles/DataLists"
 import { List } from "../atoms/List"
@@ -13,7 +13,7 @@ const Footer = () => {
         <footer className="w-full flex flex-col bg-white">
             <section className="w-full h-auto grid lg:grid-cols-5 md:grid-cols-3 lg:px-20 md:px-12 px-6 py-16 gap-7 md:gap-4 lg:gap-0">
                 <div className="flex flex-col items-start gap-4">
-                    <Image className="w-28" image={logo} alt="Logo" as="a" href="/" />
+                    <Image className="w-28" image={logo} alt="KCTRIP" as="a" href="/" />
                     <Text className="text-sm text-color4" as="p">
                         {FooterTexts.underLogoText}
                     </Text>
@@ -89,8 +89,8 @@ const Footer = () => {
                     <Image image={app} className="w-28" alt="App Download" as="a" href="/" />
                 </div>
             </section>
-            <Text className="text-center bg-color4 text-white text-xs py-6 font-light">
-                Copyright 2023. Finexs.com. All rights reserved.
+            <Text className="text-center bg-white text-color4 text-xs py-6 font-light border-t border-gray-200">
+                Copyright 2023. KCTrip.com. All rights reserved.
             </Text>
         </footer>
     )

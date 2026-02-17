@@ -177,7 +177,7 @@ class CityManagementController extends Controller
             
             return response()->json([
                 'success' => true,
-                'message' => 'La ville a été mise à jour avec succès',
+                'message' => __('messages.city_updated'),
                 'warning' => "Cette ville est utilisée dans {$activeTripsCount} trajets actifs",
                 'data' => $city
             ]);
@@ -187,7 +187,7 @@ class CityManagementController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'La ville a été mise à jour avec succès',
+            'message' => __('messages.city_updated'),
             'data' => $city
         ]);
     }
@@ -222,7 +222,7 @@ class CityManagementController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'La ville a été supprimée avec succès'
+            'message' => __('messages.city_deleted')
         ]);
     }
 }

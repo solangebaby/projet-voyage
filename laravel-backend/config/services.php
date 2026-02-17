@@ -25,6 +25,13 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'notchpay' => [
+        'public_key' => env('NOTCHPAY_PUBLIC_KEY'),
+        'secret_key' => env('NOTCHPAY_SECRET_KEY'),
+        'api_url' => env('NOTCHPAY_API_URL', 'https://api.notchpay.co'),
+        'sandbox_mode' => env('NOTCHPAY_SANDBOX', true),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

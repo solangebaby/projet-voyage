@@ -7,6 +7,7 @@ import { List } from "../atoms/List";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ArrowCircleRight, CirclesFour } from "@phosphor-icons/react";
 import { Slide } from "react-awesome-reveal";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 
 
@@ -32,91 +33,6 @@ const NavBar = () => {
         };
     }, []);
 
-    // Initialize Google Translate
-    useEffect(() => {
-        const addGoogleTranslateScript = () => {
-            // Check if script already exists
-            if (document.getElementById('google-translate-script')) {
-                return;
-            }
-
-            const script = document.createElement('script');
-            script.id = 'google-translate-script';
-            script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            script.async = true;
-            script.onerror = () => {
-                console.error('Failed to load Google Translate script');
-            };
-            document.body.appendChild(script);
-        };
-
-        // @ts-ignore
-        window.googleTranslateElementInit = () => {
-            try {
-                // @ts-ignore
-                if (typeof google !== 'undefined' && google.translate) {
-                    // Desktop widget
-                    const desktopElement = document.getElementById('google_translate_element');
-                    if (desktopElement && !desktopElement.hasChildNodes()) {
-                        // @ts-ignore
-                        new google.translate.TranslateElement(
-                            {
-                                pageLanguage: 'en',
-                                includedLanguages: 'en,fr,es,de,it,ar,pt',
-                                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                                autoDisplay: false
-                            },
-                            'google_translate_element'
-                        );
-                    }
-                    
-                    // Mobile widget
-                    const mobileElement = document.getElementById('google_translate_element_mobile');
-                    if (mobileElement && !mobileElement.hasChildNodes()) {
-                        // @ts-ignore
-                        new google.translate.TranslateElement(
-                            {
-                                pageLanguage: 'en',
-                                includedLanguages: 'en,fr,es,de,it,ar,pt',
-                                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                                autoDisplay: false
-                            },
-                            'google_translate_element_mobile'
-                        );
-                    }
-                }
-            } catch (error) {
-                console.error('Error initializing Google Translate:', error);
-            }
-        };
-
-        // Add script with retry logic
-        let retryCount = 0;
-        const maxRetries = 3;
-        const retryDelay = 1000;
-
-        const initWithRetry = () => {
-            addGoogleTranslateScript();
-            
-            // Check if initialization succeeded after delay
-            setTimeout(() => {
-                const desktopElement = document.getElementById('google_translate_element');
-                if (desktopElement && !desktopElement.hasChildNodes() && retryCount < maxRetries) {
-                    retryCount++;
-                    console.log(`Retrying Google Translate initialization (${retryCount}/${maxRetries})`);
-                    initWithRetry();
-                }
-            }, retryDelay);
-        };
-
-        initWithRetry();
-
-        return () => {
-            // Cleanup if needed
-            // @ts-ignore
-            delete window.googleTranslateElementInit;
-        };
-    }, []);
 
 
     return (
@@ -129,7 +45,21 @@ const NavBar = () => {
                             {
                                 NavLinks.map((navlink, index) => (
                                     <List className="w-full text-base" key={index}>
-                                        <NavLink to={navlink.url} className="relative inline-block overflow-hidden pt-2 pl-2 before:w-2 before:h-2 before:bg-color2 before:absolute before:top-2 before:-left-10 before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0.5 after:w-0.5 after:h-3 after:bg-color2 after:absolute after:left-1 after:-top-10 hover:after:top-3.5 after:transition-all after:duration-200 after:ease-in">{navlink.name}</NavLink>
+                                        {navlink.url.startsWith('#') ? (
+                                          <a
+                                            href={navlink.url}
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              const el = document.getElementById(navlink.url.replace('#', ''));
+                                              el?.scrollIntoView({ behavior: 'smooth' });
+                                            }}
+                                            className="relative inline-block overflow-hidden pt-2 pl-2 before:w-2 before:h-2 before:bg-color2 before:absolute before:top-2 before:-left-10 before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0.5 after:w-0.5 after:h-3 after:bg-color2 after:absolute after:left-1 after:-top-10 hover:after:top-3.5 after:transition-all after:duration-200 after:ease-in"
+                                          >
+                                            {navlink.name}
+                                          </a>
+                                        ) : (
+                                          <NavLink to={navlink.url} className="relative inline-block overflow-hidden pt-2 pl-2 before:w-2 before:h-2 before:bg-color2 before:absolute before:top-2 before:-left-10 before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0.5 after:w-0.5 after:h-3 after:bg-color2 after:absolute after:left-1 after:-top-10 hover:after:top-3.5 after:transition-all after:duration-200 after:ease-in">{navlink.name}</NavLink>
+                                        )}
                                     </List>
                                 ))
                             }
@@ -144,12 +74,12 @@ const NavBar = () => {
                                 ))
                             }
                             <List className="text-gray-950">
-                                <div id="google_translate_element"></div>
+                                <LanguageSwitcher />
                             </List>
                         </ul>
                     </div>
                     <div className="lg:hidden flex gap-4 items-center">
-                        <div id="google_translate_element_mobile"></div>
+                        <LanguageSwitcher />
                         <div className="hamburger text-gray-950 cursor-pointer" onClick={handleToggle}>
                             <CirclesFour size={30} color="currentColor" weight="fill" />
                         </div>
@@ -172,7 +102,22 @@ const NavBar = () => {
                             {
                                 NavLinks.map((navlink, index) => (
                                     <List className="w-full text-base" key={index}>
-                                        <NavLink to={navlink.url} onClick={handleToggle} className={`relative overflow-hidden inline-block before:w-full before:h-0.5 before:bg-color2 before:absolute before:bottom-0 before:-left-full before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0 `}>{navlink.name}</NavLink>
+                                        {navlink.url.startsWith('#') ? (
+                                          <a
+                                            href={navlink.url}
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              handleToggle();
+                                              const el = document.getElementById(navlink.url.replace('#', ''));
+                                              el?.scrollIntoView({ behavior: 'smooth' });
+                                            }}
+                                            className={`relative overflow-hidden inline-block before:w-full before:h-0.5 before:bg-color2 before:absolute before:bottom-0 before:-left-full before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0 `}
+                                          >
+                                            {navlink.name}
+                                          </a>
+                                        ) : (
+                                          <NavLink to={navlink.url} onClick={handleToggle} className={`relative overflow-hidden inline-block before:w-full before:h-0.5 before:bg-color2 before:absolute before:bottom-0 before:-left-full before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0 `}>{navlink.name}</NavLink>
+                                        )}
                                     </List>
                                 ))
                             }

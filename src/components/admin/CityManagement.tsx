@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useConfirm } from '../ConfirmDialog';
 import {
   MapPin,
   Plus,
@@ -21,6 +23,8 @@ interface City {
 }
 
 const CityManagement = () => {
+  const { t } = useTranslation();
+  const { confirm } = useConfirm();
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -142,7 +146,8 @@ const CityManagement = () => {
   };
 
   const handleDelete = async (city: City) => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer cette ville ?`)) {
+    const confirmed = await confirm(`Êtes-vous sûr de vouloir supprimer cette ville ?`);
+    if (!confirmed) {
       return;
     }
 
@@ -374,7 +379,7 @@ const CityManagement = () => {
                   onClick={closeModal}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                 >
-                  Annuler
+                  {t('admin.cities.cancel')}
                 </button>
                 <button
                   type="submit"

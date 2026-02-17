@@ -102,7 +102,7 @@ class RouteManagementController extends Controller
             'departure_time' => null,
             'arrival_time' => null,
             'price' => 0,
-            'available_seats' => 0,
+            // available_seats is calculated dynamically
             'occupied_seats' => '[]',
             'status' => 'template' // Special status for route templates
         ]);
@@ -288,7 +288,7 @@ class RouteManagementController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur de calcul'
+                'message' => __('messages.calculation_error')
             ], 400);
         }
     }

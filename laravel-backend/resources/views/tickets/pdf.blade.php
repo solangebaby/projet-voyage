@@ -113,9 +113,9 @@
     </div>
 
     <div class="trip-route">
-        {{ $departure->city_name }} 
+        {{ optional($departure)->city_name ?? '—' }} 
         <span class="arrow">→</span> 
-        {{ $destination->city_name }}
+        {{ optional($destination)->city_name ?? '—' }}
     </div>
 
     <div class="section">
@@ -123,20 +123,20 @@
         <table>
             <tr>
                 <td class="info-label">Full Name:</td>
-                <td class="info-value">{{ $passenger->first_name }} {{ $passenger->name }}</td>
+                <td class="info-value">{{ $reservation->passenger_name ?? (trim((optional($passenger)->first_name.' '.optional($passenger)->name)) ?: 'N/A') }}</td>
             </tr>
             <tr>
                 <td class="info-label">Email:</td>
-                <td class="info-value">{{ $passenger->email }}</td>
+                <td class="info-value">{{ $reservation->passenger_email ?? optional($passenger)->email ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Phone:</td>
-                <td class="info-value">{{ $passenger->phone ?? 'N/A' }}</td>
+                <td class="info-value">{{ $reservation->passenger_phone ?? optional($passenger)->phone ?? 'N/A' }}</td>
             </tr>
-            @if($passenger->cni_number)
+            @if(optional($passenger)->cni_number)
             <tr>
                 <td class="info-label">CNI Number:</td>
-                <td class="info-value">{{ $passenger->cni_number }}</td>
+                <td class="info-value">{{ optional($passenger)->cni_number }}</td>
             </tr>
             @endif
         </table>
@@ -147,23 +147,23 @@
         <table>
             <tr>
                 <td class="info-label">Bus Name:</td>
-                <td class="info-value">{{ $bus->bus_name }}</td>
+                <td class="info-value">{{ $bus->bus_name ?? $bus->brand ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Bus Type:</td>
-                <td class="info-value">{{ ucfirst($bus->type) }}</td>
+                <td class="info-value">{{ isset($bus->type) ? ucfirst($bus->type) : 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Departure Date:</td>
-                <td class="info-value">{{ \Carbon\Carbon::parse($trip->departure_date)->format('F d, Y') }}</td>
+                <td class="info-value">{{ $trip->departure_date ? \Carbon\Carbon::parse($trip->departure_date)->format('d/m/Y') : 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Departure Time:</td>
-                <td class="info-value">{{ \Carbon\Carbon::parse($trip->departure_time)->format('h:i A') }}</td>
+                <td class="info-value">{{ $trip->departure_time ? \Carbon\Carbon::parse($trip->departure_time)->format('H:i') : 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Arrival Time:</td>
-                <td class="info-value">{{ \Carbon\Carbon::parse($trip->arrival_time)->format('h:i A') }}</td>
+                <td class="info-value">{{ $trip->arrival_time ? \Carbon\Carbon::parse($trip->arrival_time)->format('H:i') : 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Seat Number:</td>
@@ -177,38 +177,41 @@
         <table>
             <tr>
                 <td class="info-label">Payment Reference:</td>
-                <td class="info-value">{{ $payment->reference }}</td>
+                <td class="info-value">{{ $payment->reference ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Amount Paid:</td>
-                <td class="info-value">{{ number_format($payment->amount, 0) }} {{ $payment->currency }}</td>
+                <td class="info-value">{{ number_format($payment->amount ?? 0, 0) }} {{ $payment->currency ?? 'XAF' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Payment Method:</td>
-                <td class="info-value">{{ $payment->method }}</td>
+                <td class="info-value">{{ $payment->method ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="info-label">Payment Date:</td>
-                <td class="info-value">{{ \Carbon\Carbon::parse($payment->completed_at)->format('F d, Y h:i A') }}</td>
+                <td class="info-value">{{ isset($payment->completed_at) ? \Carbon\Carbon::parse($payment->completed_at)->format('d/m/Y H:i') : 'N/A' }}</td>
             </tr>
         </table>
     </div>
 
     <div class="qr-code">
-        <img src="data:image/png;base64,{{ base64_encode(QrCode::format('png')->size(150)->generate($ticket->ticket_number)) }}" alt="QR Code">
-        <p style="margin-top: 10px; color: #6b7280; font-size: 12px;">Scan this QR code for verification</p>
+        @if (!empty($qr_svg))
+         {!! $qr_svg !!}
+@if (!empty($qr_png))
+
+            <img src="data:image/png;base64,{{ $qr_png }}" alt="QR Code" width="150" height="150" />
+        @else
+            @php
+                $qrAvailable = class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class);
+                $qrValue = url('/api/tickets/'.$ticket->ticket_number);
+            @endphp
+            @if ($qrAvailable)
+                {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(150)->margin(1)->generate($qrValue) !!}
+            @else
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($qrValue) }}" alt="QR Code" width="150" height="150" />
+            @endif
+        @endif
     </div>
 
-    <div style="text-align: center; margin: 20px 0;">
-        <span class="status-badge status-valid">{{ strtoupper($ticket->status) }}</span>
-    </div>
-
-    <div class="footer">
-        <p><strong>Important Information:</strong></p>
-        <p>Please arrive at the departure point at least 30 minutes before departure time.</p>
-        <p>This ticket is non-transferable and must be presented along with a valid ID.</p>
-        <p>For any inquiries, please contact us at: support@jadootravels.com | +237 XXX XXX XXX</p>
-        <p style="margin-top: 15px;">© {{ date('Y') }} Jadoo Travels. All rights reserved.</p>
-    </div>
 </body>
 </html>

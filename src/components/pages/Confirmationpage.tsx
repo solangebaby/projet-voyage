@@ -81,7 +81,51 @@ const Confirmationpage = () => {
       toast.success('PDF downloaded successfully!', { id: 'pdf' })
     } catch (error: any) {
       console.error('Error downloading PDF:', error)
-      toast.error('Failed to download PDF. Please try again.', { id: 'pdf' })
+      toast.error('Failed to download server PDF. Try "Download Exact" to export exactly as displayed.', { id: 'pdf' })
+    } finally {
+      setDownloadingPdf(false)
+    }
+  }
+
+  // Download exactly as displayed (includes QR from DOM). Loads libs from CDN if missing.
+  const handleDownloadExact = async () => {
+    if (!ticket) return
+    setDownloadingPdf(true)
+    try {
+      const loadScript = (src: string) => new Promise<void>((resolve, reject) => {
+        const s = document.createElement('script')
+        s.src = src
+        s.async = true
+        s.onload = () => resolve()
+        s.onerror = () => reject(new Error(`Failed to load ${src}`))
+        document.body.appendChild(s)
+      })
+
+      const w = window as any
+      if (!w.html2canvas) {
+        await loadScript('https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js')
+      }
+      if (!w.jspdf || !w.jspdf.jsPDF) {
+        await loadScript('https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js')
+      }
+
+      const node = document.getElementById('ticket-content')
+      if (!node) throw new Error('Ticket content not found')
+
+      const html2canvas = (window as any).html2canvas
+      const { jsPDF } = (window as any).jspdf
+
+      const canvas = await html2canvas(node, { scale: 2, useCORS: true })
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      pdf.save(`ticket_${ticket.ticket_number || ticket.id}.pdf`)
+      toast.success('PDF exported (exact view)!', { id: 'pdf' })
+    } catch (e) {
+      console.error('Exact export failed:', e)
+      toast.error('Exact export failed. Please try again.')
     } finally {
       setDownloadingPdf(false)
     }
@@ -114,6 +158,21 @@ const Confirmationpage = () => {
       </>
     )
   }
+
+  // Derive safe accessors for display
+  const reservation = ticket?.reservation || ticket
+  const trip = reservation?.trip || ticket?.trip
+  const passengerName = reservation?.passenger_name || reservation?.user?.name || 'N/A'
+  const passengerPhone = reservation?.passenger_phone || 'N/A'
+  const departureCity = trip?.departure?.city_name || trip?.departure || ticket?.departure || '—'
+  const destinationCity = trip?.destination?.city_name || trip?.destination || ticket?.destination || '—'
+  const departureTime = trip?.departure_time || ticket?.departure_time || ''
+  const arrivalTime = trip?.arrival_time || ticket?.arrival_time || ''
+  const departureDate = trip?.departure_date || trip?.date || ticket?.date || ''
+  const seatNumber = reservation?.selected_seat || ticket?.selected_seat || ticket?.seat_number || 'N/A'
+  const totalAmount = Number(reservation?.payment?.amount ?? ticket?.total_price ?? trip?.bus?.price ?? 0) || 0
+  const busName = trip?.bus?.bus_name || trip?.bus?.brand || trip?.bus?.internal_number || 'N/A'
+  const plateNumber = trip?.bus?.matricule || trip?.bus?.registration || trip?.bus?.plate_number || 'N/A'
 
   if (!ticket) {
     return (
@@ -161,7 +220,7 @@ const Confirmationpage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold mb-1">E-Ticket</h2>
-                  <p className="text-sm opacity-90">Jadoo Travels</p>
+                  <p className="text-sm opacity-90">KCTrip</p>
                 </div>
                 <TicketIcon size={48} weight="fill" />
               </div>
@@ -184,10 +243,10 @@ const Confirmationpage = () => {
                     <div className="flex-1">
                       <p className="text-sm text-gray-500 mb-1">From</p>
                       <p className="text-xl font-bold text-gray-900">
-                        {ticket.trip?.departure || ticket.departure}
+                        {departureCity}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {formatTime(ticket.trip?.departure_time || ticket.departure_time)}
+                        {formatTime(departureTime)}
                       </p>
                     </div>
                     
@@ -196,10 +255,10 @@ const Confirmationpage = () => {
                     <div className="flex-1">
                       <p className="text-sm text-gray-500 mb-1">To</p>
                       <p className="text-xl font-bold text-gray-900">
-                        {ticket.trip?.destination || ticket.destination}
+                        {destinationCity}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {formatTime(ticket.trip?.arrival_time || ticket.arrival_time)}
+                        {formatTime(arrivalTime)}
                       </p>
                     </div>
                   </div>
@@ -210,12 +269,9 @@ const Confirmationpage = () => {
                       <div>
                         <p className="text-xs text-gray-500">Date</p>
                         <p className="font-medium text-gray-900">
-                          {new Date(ticket.trip?.date || ticket.date).toLocaleDateString('en-US', {
-                            weekday: 'short',
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
+                          {departureDate ? new Date(departureDate).toLocaleDateString('fr-FR', {
+                            weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+                          }) : '—'}
                         </p>
                       </div>
                     </div>
@@ -225,7 +281,7 @@ const Confirmationpage = () => {
                       <div>
                         <p className="text-xs text-gray-500">Seat Number</p>
                         <p className="font-bold text-xl text-color2">
-                          {ticket.selected_seat || ticket.seat_number || 'N/A'}
+                          {seatNumber}
                         </p>
                       </div>
                     </div>
@@ -236,12 +292,11 @@ const Confirmationpage = () => {
                 <div className="flex items-center justify-center md:border-l-2 md:border-dashed md:border-gray-300">
                   <div className="text-center">
                     <QRCodeSVG 
-                      value={`TICKET:${ticket.ticket_number || ticket.id}`}
+                      value={`http://localhost:8000/api/tickets/${ticket.ticket_number || ticket.id}`}
                       size={120}
                       level="M"
                       includeMargin={true}
                     />
-                    <p className="text-xs text-gray-500 mt-2">Scan QR Code</p>
                   </div>
                 </div>
               </div>
@@ -256,13 +311,13 @@ const Confirmationpage = () => {
                   <div>
                     <p className="text-xs text-gray-500">Full Name</p>
                     <p className="font-medium text-gray-900">
-                      {ticket.passenger_name || `${ticket.passenger_info?.first_name} ${ticket.passenger_info?.last_name}`}
+                      {passengerName}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Phone Number</p>
                     <p className="font-medium text-gray-900">
-                      {ticket.passenger_phone || ticket.passenger_info?.phone || 'N/A'}
+                      {passengerPhone}
                     </p>
                   </div>
                 </div>
@@ -278,19 +333,19 @@ const Confirmationpage = () => {
                   <div>
                     <p className="text-xs text-gray-500">Bus Name</p>
                     <p className="font-medium text-gray-900">
-                      {ticket.trip?.bus?.bus_name || ticket.bus_name || 'N/A'}
+                      {busName}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Bus Type</p>
                     <p className="font-medium text-gray-900">
-                      {ticket.trip?.bus?.bus_type || ticket.bus_type || 'Standard'}
+                      {trip?.bus?.type?.toUpperCase?.() || trip?.bus?.bus_type || 'Standard'}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Plate Number</p>
                     <p className="font-medium text-gray-900">
-                      {ticket.trip?.bus?.plate_number || ticket.plate_number || 'N/A'}
+                      {plateNumber}
                     </p>
                   </div>
                 </div>
@@ -304,7 +359,7 @@ const Confirmationpage = () => {
                     <span>Total Amount Paid</span>
                   </span>
                   <span className="text-2xl font-bold text-color2">
-                    {formatPrice(ticket.total_price || ticket.price || 0)}
+                    {formatPrice(totalAmount)}
                   </span>
                 </div>
               </div>

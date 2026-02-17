@@ -12,6 +12,7 @@ class Ticket extends Model
     protected $fillable = [
         'reservation_id',
         'ticket_number',
+        'ticket_type',
         'qr_code',
         'status'
     ];

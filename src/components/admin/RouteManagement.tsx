@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useConfirm } from '../ConfirmDialog';
 import {
   MapTrifold,
   Plus,
@@ -11,6 +12,7 @@ import {
   Clock,
   Path
 } from '@phosphor-icons/react';
+import { t } from 'i18next';
 
 interface City {
   id: number;
@@ -30,6 +32,7 @@ interface Route {
 }
 
 const RouteManagement = () => {
+  const { confirm } = useConfirm();
   const [routes, setRoutes] = useState<Route[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,7 +172,8 @@ const RouteManagement = () => {
 
   const handleDelete = async (route: Route) => {
     const routeName = `${route.departure.city_name} → ${route.destination.city_name}`;
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer le trajet ${routeName} ?`)) {
+    const confirmed = await confirm(`Êtes-vous sûr de vouloir supprimer le trajet ${routeName} ?`);
+    if (!confirmed) {
       return;
     }
 
@@ -381,7 +385,7 @@ const RouteManagement = () => {
                   onClick={closeModal}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                 >
-                  Annuler
+                  {t('admin.routes.cancel')}
                 </button>
                 <button
                   type="submit"

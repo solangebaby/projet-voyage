@@ -1,5 +1,6 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text } from "../atoms/Text"
+import axios from 'axios';
 import { TestimonialTexts } from "../particles/DataLists"
 import Slider from "react-slick";
 import { Button } from "../atoms/Button";
@@ -10,8 +11,52 @@ import ProfileImg2 from "../../assets/profile2.jpeg"
 import ProfileImg3 from "../../assets/profile3.jpeg"
 import ProfileImg4 from "../../assets/profile4.jpeg"
 
+type ApiComment = {
+  id: number;
+  content: string;
+  rating: number;
+  created_at: string;
+  user?: { name: string };
+  guest_name?: string;
+};
+
 const Testimonials = () => {
     const sliderRef = useRef<Slider | null>();
+    const [apiTestimonials, setApiTestimonials] = useState<ApiComment[]>([]);
+
+    useEffect(() => {
+      const load = async () => {
+        try {
+          const res = await axios.get('http://localhost:8000/api/comments');
+          if (res.data.success) {
+            const filtered = (res.data.data as ApiComment[]).filter((c) => (c.rating ?? 0) >= 3);
+            setApiTestimonials(filtered.slice(0, 10));
+          }
+        } catch (e) {
+          // silent fail, fallback to static testimonials
+        }
+      };
+
+      const onUpdated = () => load();
+
+      // initial load
+      load();
+
+      // refresh instantly after comment submit
+      window.addEventListener('comments:updated', onUpdated);
+      return () => window.removeEventListener('comments:updated', onUpdated);
+    }, []);
+
+    const testimonialFeed = useMemo(() => {
+      if (apiTestimonials.length > 0) {
+        return apiTestimonials.map((c) => ({
+          text: c.content,
+          person: c.user?.name || c.guest_name || 'Guest',
+          location: `Rating: ${c.rating}/5`,
+        }));
+      }
+      return TestimonialTexts.feedBacks;
+    }, [apiTestimonials]);
 
     // Function for next button
     const next = () => {
@@ -69,7 +114,7 @@ const Testimonials = () => {
                     <div className="lg:h-[250px] w-[90%]">
                         <Slider ref={(slider) => (sliderRef.current = slider)} {...settings}>
                             {
-                                TestimonialTexts.feedBacks.map((feedBack, index) => (
+                                testimonialFeed.map((feedBack, index) => (
                                     <div key={index} className="w-full">
                                         <Card cardClass="bg-white shadow border-[1px] border-color3/10 relative rounded-xl p-4 lg:h-[200px] h-[260px] lg:mb-4 w-full flex gap-4 justify-start" imageAlt={feedBack.person} imageSrc={renderProfileImg(index)} imageWrapperClass="w-20 h-20 rounded-full absolute lg:bottom-4 bottom-3 right-4 overflow-hidden" cover="object-cover object-top" textWrapperClass="flex flex-col justify-center gap-6">
                                             <Text as="q" className="text-[0.84rem] font-light text-color3">

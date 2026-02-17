@@ -63,39 +63,39 @@ const SeatSelector = ({ totalSeats, occupiedSeats, onSeatSelect, selectedSeat }:
   };
 
   const getSeatColor = (status: string, isHovered: boolean) => {
-    if (status === 'occupied') return 'bg-red-500 cursor-not-allowed';
-    if (status === 'selected') return 'bg-green-500 text-white scale-110';
-    if (isHovered) return 'bg-blue-300 scale-105';
-    return 'bg-gray-200 hover:bg-blue-200';
+    if (status === 'occupied') return 'bg-gray-400 cursor-not-allowed opacity-60';
+    if (status === 'selected') return 'bg-gradient-to-br from-blue-600 to-blue-700 text-white scale-110 shadow-xl';
+    if (isHovered) return 'bg-gradient-to-br from-yellow-300 to-yellow-400 scale-105';
+    return 'bg-gradient-to-br from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 shadow-md';
   };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Legend */}
-      <div className="flex justify-center gap-6 mb-8 flex-wrap">
+      <div className="flex justify-center gap-6 mb-8 flex-wrap bg-gradient-to-r from-blue-50 to-yellow-50 p-4 rounded-xl border-2 border-blue-200">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center">
-            <Armchair size={18} />
+          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-md">
+            <Armchair size={20} weight="fill" className="text-gray-900" />
           </div>
-          <span className="text-sm text-gray-600">{t('booking.available')}</span>
+          <span className="text-sm font-bold text-gray-800">Available</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-            <Armchair size={18} className="text-white" />
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
+            <Armchair size={20} weight="fill" className="text-white" />
           </div>
-          <span className="text-sm text-gray-600">{t('booking.selected')}</span>
+          <span className="text-sm font-bold text-gray-800">Selected</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
-            <Armchair size={18} className="text-white" />
+          <div className="w-10 h-10 bg-gray-400 rounded-lg flex items-center justify-center">
+            <Armchair size={20} weight="fill" className="text-gray-700" />
           </div>
-          <span className="text-sm text-gray-600">{t('booking.occupied')}</span>
+          <span className="text-sm font-bold text-gray-800">Occupied</span>
         </div>
       </div>
 
       {/* Bus Front */}
-      <div className="bg-gray-800 text-white text-center py-3 rounded-t-3xl mb-4">
-        <p className="font-semibold">🚗 {t('booking.selectSeat')}</p>
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center py-4 rounded-t-3xl mb-4 shadow-lg">
+        <p className="font-bold text-lg">🚗 Select Your Seat</p>
       </div>
 
       {/* Seat Map */}
@@ -186,9 +186,9 @@ const SeatSelector = ({ totalSeats, occupiedSeats, onSeatSelect, selectedSeat }:
 
       {/* Seat Info */}
       {selectedSeat && (
-        <div className="mt-6 p-4 bg-green-50 border-2 border-green-500 rounded-lg text-center">
-          <p className="text-green-800 font-semibold">
-            Selected Seat: <span className="text-2xl">{selectedSeat}</span>
+        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-yellow-50 border-2 border-blue-500 rounded-lg text-center shadow-md">
+          <p className="text-gray-800 font-bold">
+            Selected Seat: <span className="text-3xl text-blue-600">{selectedSeat}</span>
           </p>
         </div>
       )}
@@ -200,12 +200,12 @@ const SeatSelector = ({ totalSeats, occupiedSeats, onSeatSelect, selectedSeat }:
           <p className="text-2xl font-bold text-gray-900">{totalSeats}</p>
         </div>
         <div>
-          <p className="font-semibold text-gray-700">{t('booking.occupied')}</p>
-          <p className="text-2xl font-bold text-red-600">{occupiedSeats.length}</p>
+          <p className="font-semibold text-gray-700">Occupied</p>
+          <p className="text-2xl font-bold text-gray-600">{occupiedSeats.length}</p>
         </div>
         <div>
-          <p className="font-semibold text-gray-700">{t('booking.availableSeats')}</p>
-          <p className="text-2xl font-bold text-green-600">{totalSeats - occupiedSeats.length}</p>
+          <p className="font-semibold text-gray-700">Available Seats</p>
+          <p className="text-2xl font-bold text-blue-600">{totalSeats - occupiedSeats.length}</p>
         </div>
       </div>
     </div>

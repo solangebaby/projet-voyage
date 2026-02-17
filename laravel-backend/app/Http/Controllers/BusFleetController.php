@@ -99,7 +99,7 @@ class BusFleetController extends Controller
 
         // Count active trips using this bus
         $activeTripsCount = $bus->trips()->where('status', 'active')
-            ->where('trip_date', '>=', now())
+            ->where('departure_date', '>=', now()->toDateString())
             ->count();
 
         return response()->json([
@@ -149,7 +149,7 @@ class BusFleetController extends Controller
         if ($request->state === 'en_maintenance' && $bus->state !== 'en_maintenance') {
             $assignedTrips = $bus->trips()
                 ->where('status', 'active')
-                ->where('trip_date', '>=', now())
+                ->where('departure_date', '>=', now()->toDateString())
                 ->count();
 
             if ($assignedTrips > 0) {
@@ -203,7 +203,7 @@ class BusFleetController extends Controller
         // Check if bus is assigned to future trips
         $futureTripsCount = $bus->trips()
             ->where('status', 'active')
-            ->where('trip_date', '>', now())
+            ->where('departure_date', '>', now()->toDateString())
             ->count();
 
         if ($futureTripsCount > 0) {
@@ -318,7 +318,7 @@ class BusFleetController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "Configuration mise à jour. {$availableSeats} sièges disponibles à la vente",
+            'message' => __('messages.seat_configuration_updated', ['available_seats' => $availableSeats]),
             'data' => $bus->fresh()
         ]);
     }

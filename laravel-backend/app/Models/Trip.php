@@ -13,13 +13,15 @@ class Trip extends Model
         'bus_id',
         'departure_id',
         'destination_id',
+        'departure_agency_id',
+        'arrival_agency_id',
         'departure_date',
         'departure_time',
         'arrival_date',
         'arrival_time',
-        'available_seats',
         'occupied_seats',
         'distance_km',
+        'price',
         'status'
     ];
 
@@ -42,6 +44,16 @@ class Trip extends Model
     public function destination()
     {
         return $this->belongsTo(Destination::class, 'destination_id');
+    }
+
+    public function departureAgency()
+    {
+        return $this->belongsTo(Agency::class, 'departure_agency_id');
+    }
+
+    public function arrivalAgency()
+    {
+        return $this->belongsTo(Agency::class, 'arrival_agency_id');
     }
 
     public function reservations()

@@ -21,9 +21,9 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
-            'cni_number' => 'nullable|string|max:50',
+            'cni_number' => 'required|regex:/^[A-Za-z0-9]{9,12}$/',
             'civility' => 'nullable|in:Mr,Mrs,Miss',
-            'gender' => 'nullable|in:Male,Female',
+            'gender' => 'required|in:Homme,Femme',
         ]);
 
         if ($validator->fails()) {
@@ -47,10 +47,16 @@ class AuthController extends Controller
             'status' => 'active',
         ]);
 
+        // Create token for immediate authentication
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
             'success' => true,
             'message' => 'User registered successfully',
-            'data' => $user
+            'data' => [
+                'user' => $user,
+                'token' => $token
+            ]
         ], 201);
     }
 

@@ -5,6 +5,7 @@ import { Bus, Clock, MapPin, Users, Star } from "@phosphor-icons/react"
 import toast from "react-hot-toast"
 import NavBar from "../organs/NavBar"
 import Footer from "../organs/Footer"
+import { t } from "i18next"
 
 interface LocationState {
   trips: Trip[]
@@ -83,120 +84,116 @@ const TicketDetails = () => {
   return (
     <>
       <NavBar />
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen pt-20 bg-gradient-to-br from-neutral-50 via-primary-50 to-neutral-50 py-2">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-4">
           {/* Header */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Available Trips
-            </h1>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <div className="flex items-center gap-1">
-                <MapPin size={16} weight="fill" className="text-color2" />
-                <span className="font-medium">{departure}</span>
-                <span>→</span>
-                <span className="font-medium">{destination}</span>
+          <div className="bg-white rounded-lg shadow-sm p-3 mb-3 border border-primary">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg">
+                <Bus size={32} weight="fill" className="text-white" />
               </div>
-              <div className="flex items-center gap-1">
-                <Clock size={16} weight="fill" className="text-color2" />
-                <span>{new Date(date).toLocaleDateString('en-US', { 
+              <div>
+                <h1 className="text-lg font-semibold bg-primary text-primary">
+                  Available Trips
+                </h1>
+                <p className="text-gray-600 text-sm mt-1">Choose the trip that suits you best</p>
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-4 mt-6">
+              <div className="flex items-center gap-2 bg-primary-50 px-4 py-2 rounded-lg border border-primary">
+                <MapPin size={20} weight="fill" className="text-primary" />
+                <span className="font-bold text-gray-900">{departure}</span>
+                <span className="text-lg">→</span>
+                <span className="font-bold text-gray-900">{destination}</span>
+              </div>
+              <div className="flex items-center gap-2 bg-secondary-50 px-4 py-2 rounded-lg border border-secondary">
+                <Clock size={20} weight="fill" className="text-secondary" />
+                <span className="font-semibold text-gray-700">{new Date(date).toLocaleDateString('en-US', { 
                   weekday: 'long', 
                   year: 'numeric', 
                   month: 'long', 
                   day: 'numeric' 
                 })}</span>
               </div>
+              <div className="ml-auto bg-primary-50 px-4 py-2 rounded-lg border border-primary">
+                <span className="text-sm font-semibold text-gray-600">Results: </span>
+                <span className="text-lg font-semibold text-primary">{trips.length}</span>
+                <span className="text-sm font-semibold text-gray-600"> trip{trips.length > 1 ? 's' : ''}</span>
+              </div>
             </div>
-            <p className="mt-2 text-sm text-gray-500">
-              {trips.length} trip(s) found
-            </p>
           </div>
 
-          {/* Trips List */}
-          <div className="space-y-4">
+          {/* Trips List - Structure simplifiée type Trainline */}
+          <div className="space-y-2">
             {trips.map((trip) => (
               <div 
                 key={trip.id} 
-                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+                className="bg-white border-l-4 border-l-primary border-y border-r border-neutral-200 hover:border-primary hover:bg-neutral-50 rounded-lg hover:shadow-md transition-all duration-200"
               >
-                <div className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                    {/* Time Info */}
-                    <div className="flex items-center gap-4">
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-gray-900">
-                          {formatTime(trip.departure_time)}
-                        </p>
-                        <p className="text-xs text-gray-500">Departure</p>
+                <div className="p-3 md:p-4">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+                    {/* Horaires - Style Trainline */}
+                    <div className="flex items-center gap-3 w-full md:min-w-[250px]">
+                      <div>
+                        <p className="text-xl md:text-2xl font-bold text-dark">{formatTime(trip.departure_time)}</p>
+                        <p className="text-xs text-neutral-600">{trip.departure.city_name}</p>
+                        {trip.departureAgency && (
+                          <p className="text-xs text-neutral-500">{trip.departureAgency.neighborhood}</p>
+                        )}
                       </div>
-                      <div className="flex-1 hidden md:block">
-                        <div className="border-t-2 border-dashed border-gray-300 relative">
-                          <Bus 
-                            size={20} 
-                            className="absolute -top-3 left-1/2 transform -translate-x-1/2 text-color2 bg-white px-1" 
-                          />
+                      <div className="flex-1 text-center px-2">
+                        <div className="flex items-center gap-1 text-neutral-400">
+                          <div className="h-px flex-1 bg-neutral-300"></div>
+                          <Bus size={16} weight="fill" className="text-primary" />
+                          <div className="h-px flex-1 bg-neutral-300"></div>
                         </div>
+                        <p className="text-xs text-neutral-500 mt-1">{trip.duration || 'N/A'}</p>
                       </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-gray-900">
-                          {formatTime(trip.arrival_time)}
-                        </p>
-                        <p className="text-xs text-gray-500">Arrival</p>
-                      </div>
-                    </div>
-
-                    {/* Bus Info */}
-                    <div className="md:col-span-2">
-                      <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-12 h-12 bg-color2/10 rounded-lg flex items-center justify-center">
-                          <Bus size={24} weight="fill" className="text-color2" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">
-                            {trip.bus?.bus_name || "Bus"}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {trip.bus?.bus_type || "Standard"} • Plate: {trip.bus?.plate_number || "N/A"}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <div className="flex items-center gap-1">
-                              <Users size={14} className="text-gray-500" />
-                              <span className="text-xs text-gray-600">
-                                {trip.available_seats} / {trip.bus?.total_seats || 0} seats available
-                              </span>
-                            </div>
-                            {trip.bus?.bus_type === 'VIP' && (
-                              <div className="flex items-center gap-1">
-                                <Star size={14} weight="fill" className="text-yellow-500" />
-                                <span className="text-xs text-gray-600">VIP</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Price & Action */}
-                    <div className="flex flex-col items-end justify-center gap-2">
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-color2">
-                          {formatPrice(trip.price)}
-                        </p>
-                        <p className="text-xs text-gray-500">per seat</p>
+                        <p className="text-xl md:text-2xl font-bold text-dark">{formatTime(trip.arrival_time)}</p>
+                        <p className="text-xs text-neutral-600">{trip.destination.city_name}</p>
+                        {trip.arrivalAgency && (
+                          <p className="text-xs text-neutral-500">{trip.arrivalAgency.neighborhood}</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Info Bus - Compact */}
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                      <div className="flex items-center gap-2">
+                        <Bus size={18} weight="fill" className="text-neutral-600" />
+                        <div>
+                          <p className="text-sm font-semibold text-dark">{trip.bus?.bus_name || "Bus"}</p>
+                          <p className="text-xs text-neutral-500">{trip.bus?.type || "Standard"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users size={16} className={trip.available_seats > 5 ? 'text-success' : 'text-warning'} />
+                        <span className={`text-sm font-medium ${trip.available_seats > 5 ? 'text-success' : 'text-warning'}`}>
+                          {trip.available_seats} places
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Prix & Action - Style simple */}
+                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-primary">{formatPrice(trip.price)}</p>
+                        <p className="text-xs text-neutral-500">par personne</p>
                       </div>
                       <button
                         onClick={() => handleSelectTrip(trip)}
                         disabled={loading || trip.available_seats <= 0}
                         className={`
-                          px-6 py-2 rounded-lg font-medium text-sm transition-all duration-200
+                          px-6 py-2.5 rounded-md font-medium text-sm transition-all
                           ${trip.available_seats <= 0 
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
-                            : 'bg-color2 text-white hover:bg-color3 hover:scale-105'
+                            ? 'bg-neutral-200 text-neutral-400 cursor-not-allowed' 
+                            : 'bg-primary hover:bg-primary-dark text-white'
                           }
-                          disabled:opacity-50 disabled:cursor-not-allowed
                         `}
                       >
-                        {trip.available_seats <= 0 ? 'Sold Out' : 'Select Trip'}
+                        {trip.available_seats <= 0 ? 'Complet' : 'Réserver'}
                       </button>
                     </div>
                   </div>
@@ -204,7 +201,8 @@ const TicketDetails = () => {
 
                 {/* Features (if bus has features) */}
                 {trip.bus?.features && (
-                  <div className="border-t border-gray-100 px-6 py-3 bg-gray-50">
+                  <div className="border-t-2 border-dashed border-gray-200 px-6 py-2 bg-gradient-to-r from-primary-50/50 via-secondary-50/50 to-primary-50/50">
+                    <p className="text-xs font-bold text-gray-600 mb-2 uppercase tracking-wide">✨ Amenities & Services</p>
                     <div className="flex flex-wrap gap-2">
                       {(() => {
                         try {
@@ -214,9 +212,9 @@ const TicketDetails = () => {
                           return Array.isArray(features) && features.map((feature: string, index: number) => (
                             <span 
                               key={index}
-                              className="text-xs bg-white px-3 py-1 rounded-full text-gray-600 border border-gray-200"
+                              className="text-xs bg-white px-4 py-2 rounded-lg text-gray-700 border border-primary/30 font-semibold shadow-sm hover:bg-primary hover:text-white hover:scale-105 transition-all"
                             >
-                              {feature}
+                              ✓ {feature}
                             </span>
                           ));
                         } catch (e) {
@@ -230,13 +228,24 @@ const TicketDetails = () => {
             ))}
           </div>
 
-          {/* Back Button */}
-          <div className="mt-6 text-center">
+          {/* Action Buttons */}
+          <div className="mt-4 flex justify-center gap-4">
             <button
               onClick={() => navigate("/")}
-              className="text-color2 hover:text-color3 font-medium text-sm"
+              className="inline-flex items-center gap-2 bg-white text-primary hover:text-white px-4 py-2 rounded-lg font-bold text-base border border-primary hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-md hover:scale-105"
             >
-              ← Back to Search
+              <span className="text-lg">←</span>
+              Back to Search
+            </button>
+            <button
+              onClick={() => {
+                if (window.confirm('Are you sure you want to cancel this search?')) {
+                  navigate("/")
+                }
+              }}
+              className="inline-flex items-center gap-2 bg-red-500 text-white hover:bg-red-600 px-4 py-2 rounded-lg font-bold text-base border border-red-600 transition-all duration-300 shadow-lg hover:shadow-md hover:scale-105"
+            >
+              ✕ Cancel
             </button>
           </div>
         </div>
@@ -247,3 +256,11 @@ const TicketDetails = () => {
 }
 
 export default TicketDetails
+
+
+
+
+
+
+
+

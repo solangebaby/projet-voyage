@@ -31,8 +31,8 @@
     "dashboard": "Dashboard"
   },
   "hero": {
-    "title": "Best Destinations around the world",
-    "subtitle": "Travel, enjoy and live a new and full life",
+    "title": "Best Destinations across Cameroon",
+    "subtitle": "Travel with comfort and confidence",
     "findMore": "Find out more",
     "bookNow": "Book Now",
     "from": "From",
@@ -157,6 +157,57 @@
     }
   },
   "admin": {
+    "reservations": {
+      "title": "Manage Reservations",
+      "id": "ID",
+      "traveler": "Traveler",
+      "email": "Email",
+      "phone": "Phone",
+      "route": "Route",
+      "date": "Date",
+      "seat": "Seat",
+      "price": "Price",
+      "status": "Status",
+      "searchPlaceholder": "Search (ID, name, email, seat...)",
+      "cancelReservation": "Cancel Reservation",
+      "viewDetails": "View Details",
+      "reservationDetails": "Reservation Details",
+      "paymentInfo": "Payment Information"
+    },
+    "payments": {
+      "title": "Payment Management",
+      "totalPayments": "Total Payments",
+      "searchPlaceholder": "Search (ID, transaction, name...)",
+      "paymentDetails": "Payment Details",
+      "paymentId": "Payment ID",
+      "refundSuccess": "Payment refunded successfully",
+      "refundConfirm": "Are you sure you want to refund this payment?"
+    },
+    "buses": {
+      "seats": "Seats",
+      "cancel": "Cancel"
+    },
+    "pricing": {
+      "title": "Pricing Management",
+      "adultPrice": "Adult Price",
+      "studentPrice": "Student Price",
+      "childPrice": "Child Price",
+      "prices": "Prices"
+    },
+    "routes": {
+      "title": "Route Management",
+      "cancel": "Cancel"
+    },
+    "voyages": {
+      "title": "Voyage Management",
+      "priceFCFA": "Price (FCFA)",
+      "positivePriceFCFA": "Positive price in FCFA",
+      "cancel": "Cancel"
+    },
+    "cities": {
+      "title": "City Management",
+      "cancel": "Cancel"
+    },
     "trips": {
       "title": "Manage Trips",
       "addNew": "Add New Trip",
@@ -201,6 +252,24 @@
       "rating": "Rating",
       "date": "Date"
     }
+  },
+  "confirmDialog": {
+    "title": "Confirmation",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "tickets": {
+    "soldOut": "🚫 Sold Out",
+    "reserve": "✓ Book Now",
+    "bookNow": "Book Now",
+    "from": "From",
+    "to": "To",
+    "priceLabel": "Price",
+    "fcfa": "FCFA"
+  },
+  "signup": {
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password"
   },
   "footer": {
     "company": "Company",

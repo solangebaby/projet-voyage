@@ -13,7 +13,7 @@ class TripController extends Controller
      */
     public function index()
     {
-        $trips = Trip::with(['bus', 'departure', 'destination'])
+        $trips = Trip::with(['bus', 'departure', 'destination', 'departureAgency', 'arrivalAgency'])
             ->where('status', 'active')
             ->orderBy('departure_date', 'asc')
             ->get();
@@ -25,11 +25,11 @@ class TripController extends Controller
     }
 
     /**
-     * Search trips by criteria
+     * Search trips by criteria with reserved seats info
      */
     public function search(Request $request)
     {
-        $query = Trip::with(['bus', 'departure', 'destination'])
+        $query = Trip::with(['bus', 'departure', 'destination', 'departureAgency', 'arrivalAgency'])
             ->where('status', 'active');
 
         if ($request->has('departure')) {
@@ -49,6 +49,14 @@ class TripController extends Controller
         }
 
         $trips = $query->orderBy('departure_date', 'asc')->get();
+
+        // Add reserved seats count for each trip
+        $trips->each(function($trip) {
+            $trip->reserved_seats_count = $trip->reservations()
+                ->whereNotIn('status', ['cancelled'])
+                ->count();
+            $trip->available_seats_count = $trip->bus->total_seats - $trip->reserved_seats_count;
+        });
 
         return response()->json([
             'success' => true,
@@ -91,7 +99,7 @@ class TripController extends Controller
             'departure_time' => $request->departure_time,
             'arrival_date' => $request->arrival_date,
             'arrival_time' => $request->arrival_time,
-            'available_seats' => $bus->total_seats,
+            // available_seats is calculated dynamically
             'occupied_seats' => [],
             'distance_km' => $request->distance_km,
             'status' => 'active'
@@ -105,11 +113,11 @@ class TripController extends Controller
     }
 
     /**
-     * Display the specified trip
+     * Display the specified trip with reserved seats
      */
     public function show(string $id)
     {
-        $trip = Trip::with(['bus', 'departure', 'destination'])->find($id);
+        $trip = Trip::with(['bus', 'departure', 'destination', 'departureAgency', 'arrivalAgency'])->find($id);
 
         if (!$trip) {
             return response()->json([
@@ -118,9 +126,18 @@ class TripController extends Controller
             ], 404);
         }
 
+        // Get all reserved seats for this trip (excluding cancelled reservations)
+        $reservedSeats = $trip->reservations()
+            ->whereNotIn('status', ['cancelled'])
+            ->pluck('selected_seat')
+            ->toArray();
+
+        $tripData = $trip->toArray();
+        $tripData['reserved_seats'] = $reservedSeats;
+
         return response()->json([
             'success' => true,
-            'data' => $trip
+            'data' => $tripData
         ]);
     }
 

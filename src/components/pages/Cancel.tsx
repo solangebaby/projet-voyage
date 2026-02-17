@@ -112,7 +112,7 @@ const Cancel: React.FC = () => {
               {/* Additional Info */}
               <div className="mt-6 text-center text-sm text-gray-500">
                 <p>Need help? Contact our support team</p>
-                <p className="mt-1">Email: support@jadoo.com | Phone: +237 123 456 789</p>
+                <p className="mt-1">Email: support@kctrip.com | Phone: +237 123 456 789</p>
               </div>
             </div>
           ) : (

@@ -1,5 +1,6 @@
 // src/components/pages/Signup.tsx
 import { useState, FormEvent, ChangeEvent } from "react";
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeSlash, UserPlus } from "@phosphor-icons/react";
 import toast from "react-hot-toast";
@@ -20,6 +21,7 @@ interface FormData {
 }
 
 const Signup: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -74,7 +76,7 @@ const Signup: React.FC = () => {
         const pendingBooking = sessionStorage.getItem('pending_booking');
         if (pendingBooking) {
           // After successful registration, user needs to login to continue
-          toast.info("Veuillez vous connecter pour continuer votre réservation");
+          toast('Please sign in to continue your booking');
           setTimeout(() => {
             navigate('/admin/login');
           }, 1500);
@@ -266,7 +268,7 @@ const Signup: React.FC = () => {
             {/* Confirmation mot de passe */}
             <div>
               <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirmer mot de passe <span className="text-red-500">*</span>
+                {t('signup.confirmPassword')} <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -277,7 +279,7 @@ const Signup: React.FC = () => {
                   value={formData.password_confirmation}
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-150"
-                  placeholder="Confirmer le mot de passe"
+                  placeholder={t('signup.confirmPasswordPlaceholder')}
                 />
                 <button
                   type="button"
@@ -294,22 +296,22 @@ const Signup: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex justify-center items-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+            className="group relative w-full flex justify-center items-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
           >
             <UserPlus size={20} className="mr-2" weight="bold" />
-            {loading ? "Création en cours..." : "Créer mon compte"}
+            {loading ? "Creating account..." : "Create Account"}
           </button>
         </form>
 
         {/* Login link */}
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Vous avez déjà un compte ?{" "}
+            Already have an account? 
             <Link
-              to="/admin/login"
+              to="/login"
               className="font-medium text-orange-500 hover:text-orange-600"
             >
-              Connectez-vous
+              Sign in
             </Link>
           </p>
         </div>

@@ -46,7 +46,11 @@ class CommentController extends Controller
         $validator = Validator::make($request->all(), [
             'trip_id' => 'nullable|exists:trips,id',
             'content' => 'required|string|min:10',
-            'rating' => 'required|integer|min:1|max:5'
+            'rating' => 'required|integer|min:1|max:5',
+
+            // guest fields (optional)
+            'guest_name' => 'nullable|string|min:2|max:80',
+            'guest_email' => 'nullable|email|max:120',
         ]);
 
         if ($validator->fails()) {
@@ -57,12 +61,19 @@ class CommentController extends Controller
             ], 422);
         }
 
+        $autoApproved = ((int) $request->rating) >= 3;
+
+        $isAuth = auth()->check();
+        // Guests are allowed without name/email. If provided, they will be saved.
+
         $comment = Comment::create([
-            'user_id' => auth()->id(),
+            'user_id' => $isAuth ? auth()->id() : null,
+            'guest_name' => $isAuth ? null : $request->guest_name,
+            'guest_email' => $isAuth ? null : $request->guest_email,
             'trip_id' => $request->trip_id,
             'content' => $request->content,
             'rating' => $request->rating,
-            'status' => 'pending' // Comments need admin approval
+            'status' => $autoApproved ? 'approved' : 'pending' // Auto-approve rating >= 3
         ]);
 
         $comment->load('user');

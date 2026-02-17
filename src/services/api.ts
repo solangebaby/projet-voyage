@@ -14,7 +14,7 @@ const apiClient = axios.create({
 
 // Add token to requests
 apiClient.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem('auth_token');
+  const token = localStorage.getItem('token') || sessionStorage.getItem('auth_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -50,11 +50,28 @@ export interface Destination {
   city_name: string;
 }
 
+export interface Agency {
+  id: number;
+  destination_id: number;
+  agency_name: string;
+  neighborhood: string;
+  address?: string;
+  phone?: string;
+  latitude?: number;
+  longitude?: number;
+  is_main_station: boolean;
+  destination?: Destination;
+}
+
 export interface Trip {
+  price:number;
+ // (price: any): import("react").ReactNode | Iterable<import("react").ReactNode>;
   id: number;
   bus_id: number;
   departure_id: number;
   destination_id: number;
+  departure_agency_id?: number;
+  arrival_agency_id?: number;
   departure_date: string;
   departure_time: string;
   arrival_date: string;
@@ -66,13 +83,24 @@ export interface Trip {
   bus?: Bus;
   departure?: Destination;
   destination?: Destination;
+  departureAgency?: Agency;
+  arrivalAgency?: Agency;
 }
 
 export interface Reservation {
   id: number;
   user_id: number;
   trip_id: number;
+  departure_agency_id?: number;
+  arrival_agency_id?: number;
   selected_seat: string;
+  passenger_name?: string;
+  passenger_first_name?: string;
+  passenger_last_name?: string;
+  passenger_email?: string;
+  passenger_phone?: string;
+  passenger_gender?: 'M' | 'F';
+  passenger_cni?: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   expires_at?: string;
   cancelled_at?: string;
@@ -110,6 +138,7 @@ export interface PassengerInput {
   cniNumber: string;
   email: string;
   phone: string;
+  gender: 'M' | 'F';
 }
 
 // API Functions
@@ -164,11 +193,24 @@ export const getTrips = async (): Promise<Trip[]> => {
 };
 
 export const searchTrips = async (params: {
-  departure?: string;
-  destination?: string;
+  departure?: string | number;
+  destination?: string | number;
   date?: string;
 }): Promise<Trip[]> => {
-  const response = await apiClient.get('/trips/search', { params });
+  // If departure and destination are provided, convert to API format
+  const searchParams: any = { ...params };
+  
+  // API expects departure_id and destination_id (numbers)
+  if (params.departure) {
+    searchParams.departure_id = params.departure;
+    delete searchParams.departure;
+  }
+  if (params.destination) {
+    searchParams.destination_id = params.destination;
+    delete searchParams.destination;
+  }
+  
+  const response = await apiClient.get('/trips/search', { params: searchParams });
   return response.data.data;
 };
 
@@ -180,14 +222,13 @@ export const getTrip = async (id: number): Promise<Trip> => {
 // Reservations
 export const createReservation = async (data: {
   trip_id: number;
-  passenger_id: number;
   selected_seat: string;
-  passenger_info?: {
-    first_name: string;
-    last_name: string;
-    phone: string;
-    email: string;
-  };
+  passenger_first_name: string;
+  passenger_last_name: string;
+  passenger_email: string;
+  passenger_phone: string;
+  passenger_gender: 'M' | 'F';
+  passenger_cni: string;
 }) => {
   const response = await apiClient.post('/reservations', data);
   return response.data.data;
@@ -215,21 +256,11 @@ export const initiatePayment = async (data: {
   payment_method: string;
   phone_number?: string;
 }) => {
-  // Transform payment_method to match backend expectations
-  let method = 'Bancaire';
-  let phone_number = data.phone_number;
-  
-  if (data.payment_method.includes('mobile_money_')) {
-    const provider = data.payment_method.replace('mobile_money_', '');
-    method = provider; // MTN, Orange, or Moov
-  } else if (data.payment_method === 'card') {
-    method = 'Bancaire';
-  }
-  
   const response = await apiClient.post('/payments/initiate', {
     reservation_id: data.reservation_id,
-    method: method,
-    phone_number: phone_number || '00000000'
+    amount: data.amount,
+    payment_method: data.payment_method,
+    phone_number: data.phone_number,
   });
   return response.data.data;
 };
@@ -280,23 +311,29 @@ export const createPassenger = async (data: PassengerInput) => {
 // Auth Service - Compatibility with utils/api.ts
 export const authService = {
   setToken(token: string): void {
+    localStorage.setItem('token', token);
     sessionStorage.setItem('auth_token', token);
   },
 
   getToken(): string | null {
-    return sessionStorage.getItem('auth_token');
+    return localStorage.getItem('token') || sessionStorage.getItem('auth_token');
   },
 
   setUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
     sessionStorage.setItem('user', JSON.stringify(user));
   },
 
   getUser(): User | null {
-    const user = sessionStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    const userFromLocal = localStorage.getItem('user');
+    const userFromSession = sessionStorage.getItem('user');
+    const userStr = userFromLocal || userFromSession;
+    return userStr ? JSON.parse(userStr) : null;
   },
 
   logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     sessionStorage.removeItem('auth_token');
     sessionStorage.removeItem('user');
   },

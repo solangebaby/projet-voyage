@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useConfirm } from '../ConfirmDialog';
 import {
   Bus as BusIcon,
   Plus,
@@ -10,6 +11,7 @@ import {
   Armchair,
   Wrench
 } from '@phosphor-icons/react';
+import { t } from 'i18next';
 
 interface Seat {
   id: string;
@@ -36,6 +38,7 @@ interface BusData {
 }
 
 const BusFleetManagement = () => {
+  const { confirm } = useConfirm();
   const [buses, setBuses] = useState<BusData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -61,15 +64,32 @@ const BusFleetManagement = () => {
   const fetchBuses = async () => {
     try {
       setLoading(true);
+      
+      // Debug: vérifier le token
+      if (!token) {
+        console.error('Pas de token trouvé');
+        toast.error('Vous devez être connecté pour accéder à cette page');
+        setLoading(false);
+        return;
+      }
+      
+      console.log('Fetching buses with token:', token?.substring(0, 20) + '...');
+      
       const response = await axios.get('http://localhost:8000/api/fleet/buses', {
         headers: { Authorization: `Bearer ${token}` }
       });
+      
+      console.log('Response:', response.data);
+      
       if (response.data.success) {
         setBuses(response.data.data);
+        toast.success(`${response.data.data.length} bus chargé(s)`);
       }
     } catch (error: any) {
       console.error('Error fetching buses:', error);
-      toast.error('Erreur lors du chargement des bus');
+      console.error('Error response:', error.response?.data);
+      const message = error.response?.data?.message || 'Erreur lors du chargement des bus';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -94,13 +114,18 @@ const BusFleetManagement = () => {
     }
 
     try {
+      console.log('Submitting bus data:', formData);
+      
       if (editingBus) {
         // Update bus
+        console.log('Updating bus:', editingBus.id);
         const response = await axios.put(
           `http://localhost:8000/api/fleet/buses/${editingBus.id}`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        
+        console.log('Update response:', response.data);
         
         if (response.data.success) {
           toast.success(response.data.message);
@@ -112,11 +137,14 @@ const BusFleetManagement = () => {
         }
       } else {
         // Create bus
+        console.log('Creating new bus');
         const response = await axios.post(
           'http://localhost:8000/api/fleet/buses',
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        
+        console.log('Create response:', response.data);
         
         if (response.data.success) {
           toast.success(response.data.message);
@@ -126,8 +154,18 @@ const BusFleetManagement = () => {
       }
     } catch (error: any) {
       console.error('Error saving bus:', error);
+      console.error('Error response:', error.response?.data);
+      
       const message = error.response?.data?.message || 'Erreur lors de l\'enregistrement';
-      toast.error(message);
+      
+      if (error.response?.data?.errors) {
+        console.error('Validation errors:', error.response.data.errors);
+        Object.values(error.response.data.errors).forEach((err: any) => {
+          toast.error(err[0]);
+        });
+      } else {
+        toast.error(message);
+      }
     }
   };
 
@@ -148,7 +186,8 @@ const BusFleetManagement = () => {
   };
 
   const handleDelete = async (bus: BusData) => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer le bus ${bus.bus_name} ?`)) {
+    const confirmed = await confirm(`Êtes-vous sûr de vouloir supprimer le bus ${bus.bus_name} ?`);
+    if (!confirmed) {
       return;
     }
 
@@ -276,7 +315,7 @@ const BusFleetManagement = () => {
                   className="flex-1 flex items-center justify-center gap-1 px-2 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition text-sm"
                 >
                   <Armchair size={16} />
-                  Sièges
+                  {t('admin.buses.seats')}
                 </button>
                 <button
                   onClick={() => handleEdit(bus)}
@@ -448,7 +487,7 @@ const BusFleetManagement = () => {
                   onClick={closeModal}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
                 >
-                  Annuler
+                  {t('admin.buses.cancel')}
                 </button>
                 <button
                   type="submit"

@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignId('destination_id')->constrained('destinations')->onDelete('cascade');
             $table->date('departure_date');
             $table->time('departure_time');
-            $table->date('arrival_date');
+            $table->date('arrival_date')->nullable();
             $table->time('arrival_time');
-            $table->integer('available_seats');
+            $table->decimal('price', 10, 2)->default(0);
             $table->json('occupied_seats')->nullable();
             $table->integer('distance_km')->nullable();
             $table->enum('status', ['active', 'completed', 'cancelled'])->default('active');

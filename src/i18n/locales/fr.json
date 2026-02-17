@@ -31,8 +31,8 @@
     "dashboard": "Tableau de bord"
   },
   "hero": {
-    "title": "Les meilleures destinations du monde",
-    "subtitle": "Voyagez, profitez et vivez une vie nouvelle et pleine",
+    "title": "Les meilleures destinations à travers le Cameroun",
+    "subtitle": "Voyagez avec confort et confiance",
     "findMore": "En savoir plus",
     "bookNow": "Réserver maintenant",
     "from": "De",
@@ -157,6 +157,57 @@
     }
   },
   "admin": {
+    "reservations": {
+      "title": "Gérer les réservations",
+      "id": "ID",
+      "traveler": "Voyageur",
+      "email": "Email",
+      "phone": "Téléphone",
+      "route": "Trajet",
+      "date": "Date",
+      "seat": "Siège",
+      "price": "Prix",
+      "status": "Statut",
+      "searchPlaceholder": "Rechercher (ID, nom, email, siège...)",
+      "cancelReservation": "Annuler la réservation",
+      "viewDetails": "Voir les détails",
+      "reservationDetails": "Détails de la réservation",
+      "paymentInfo": "Informations de paiement"
+    },
+    "payments": {
+      "title": "Gestion des paiements",
+      "totalPayments": "Total des paiements",
+      "searchPlaceholder": "Rechercher (ID, transaction, nom...)",
+      "paymentDetails": "Détails du paiement",
+      "paymentId": "ID du paiement",
+      "refundSuccess": "Paiement remboursé avec succès",
+      "refundConfirm": "Êtes-vous sûr de vouloir rembourser ce paiement?"
+    },
+    "buses": {
+      "seats": "Sièges",
+      "cancel": "Annuler"
+    },
+    "pricing": {
+      "title": "Gestion des tarifs",
+      "adultPrice": "Prix adulte",
+      "studentPrice": "Prix étudiant",
+      "childPrice": "Prix enfant",
+      "prices": "Prix"
+    },
+    "routes": {
+      "title": "Gestion des trajets",
+      "cancel": "Annuler"
+    },
+    "voyages": {
+      "title": "Gestion des voyages",
+      "priceFCFA": "Prix (FCFA)",
+      "positivePriceFCFA": "Prix positif en FCFA",
+      "cancel": "Annuler"
+    },
+    "cities": {
+      "title": "Gestion des villes",
+      "cancel": "Annuler"
+    },
     "trips": {
       "title": "Gérer les voyages",
       "addNew": "Ajouter un nouveau voyage",
@@ -201,6 +252,24 @@
       "rating": "Note",
       "date": "Date"
     }
+  },
+  "confirmDialog": {
+    "title": "Confirmation",
+    "cancel": "Annuler",
+    "confirm": "Confirmer"
+  },
+  "tickets": {
+    "soldOut": "🚫 Complet",
+    "reserve": "✓ Réserver",
+    "bookNow": "Réserver maintenant",
+    "from": "De",
+    "to": "À",
+    "priceLabel": "Prix",
+    "fcfa": "FCFA"
+  },
+  "signup": {
+    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Confirmez votre mot de passe"
   },
   "footer": {
     "company": "Entreprise",

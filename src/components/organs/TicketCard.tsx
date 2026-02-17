@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Button } from "../atoms/Button";
+import { useTranslation } from 'react-i18next';
 
 interface Ticket {
   id: number;
@@ -12,6 +13,7 @@ interface Ticket {
 }
 
 const Tickets = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { departure, destination } = location.state || {};
@@ -52,13 +54,13 @@ const Tickets = () => {
                   {ticket.departure} → {ticket.destination}
                 </h2>
                 <p>Heure : {ticket.time}</p>
-                <p>Prix : {ticket.price} FCFA</p>
+                <p>{t('tickets.priceLabel')}: {ticket.price} {t('tickets.fcfa')}</p>
               </div>
               <Button
                 onClick={() => handleReserve(ticket)}
                 className="bg-yellow-500 text-white px-4 py-2 rounded-lg"
               >
-                Réserver
+                {t('tickets.reserve')}
               </Button>
             </div>
           ))}

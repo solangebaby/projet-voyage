@@ -12,6 +12,8 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\AgencyController;
+use App\Http\Controllers\UserManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +27,10 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Destinations (public)
 Route::get('/destinations', [DestinationController::class, 'index']);
+
+// Agencies (public - for viewing)
+Route::get('/agencies', [AgencyController::class, 'index']);
+Route::get('/agencies/{id}', [AgencyController::class, 'show']);
 
 // City Management (Admin Only)
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
@@ -42,6 +48,11 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::delete('/routes/{id}', [App\Http\Controllers\RouteManagementController::class, 'destroy']);
     Route::post('/routes/calculate-arrival', [App\Http\Controllers\RouteManagementController::class, 'calculateArrivalTime']);
     
+    // Agency Management
+    Route::post('/agencies', [AgencyController::class, 'store']);
+    Route::put('/agencies/{id}', [AgencyController::class, 'update']);
+    Route::delete('/agencies/{id}', [AgencyController::class, 'destroy']);
+    
     // Bus Fleet Management
     Route::get('/fleet/buses', [App\Http\Controllers\BusFleetController::class, 'index']);
     Route::post('/fleet/buses', [App\Http\Controllers\BusFleetController::class, 'store']);
@@ -50,9 +61,18 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::delete('/fleet/buses/{id}', [App\Http\Controllers\BusFleetController::class, 'destroy']);
     Route::put('/fleet/buses/{id}/seats', [App\Http\Controllers\BusFleetController::class, 'updateSeatConfiguration']);
     
+    // Tarif Management
+    Route::get('/tarifs', [App\Http\Controllers\TarifController::class, 'index']);
+    Route::post('/tarifs', [App\Http\Controllers\TarifController::class, 'store']);
+    Route::get('/tarifs/{id}', [App\Http\Controllers\TarifController::class, 'show']);
+    Route::put('/tarifs/{id}', [App\Http\Controllers\TarifController::class, 'update']);
+    Route::delete('/tarifs/{id}', [App\Http\Controllers\TarifController::class, 'destroy']);
+    Route::post('/tarifs/{id}/calculate-price', [App\Http\Controllers\TarifController::class, 'calculatePrice']);
+    
     // Voyage Management
     Route::get('/voyages', [App\Http\Controllers\VoyageManagementController::class, 'index']);
     Route::post('/voyages', [App\Http\Controllers\VoyageManagementController::class, 'store']);
+    Route::post('/voyages/bulk', [App\Http\Controllers\VoyageManagementController::class, 'storeBulk']);
     Route::get('/voyages/calendar', [App\Http\Controllers\VoyageManagementController::class, 'calendar']);
     Route::get('/voyages/{id}', [App\Http\Controllers\VoyageManagementController::class, 'show']);
     Route::put('/voyages/{id}', [App\Http\Controllers\VoyageManagementController::class, 'update']);
@@ -70,12 +90,25 @@ Route::get('/trips', [TripController::class, 'index']);
 Route::get('/trips/search', [TripController::class, 'search']);
 Route::get('/trips/{id}', [TripController::class, 'show']);
 
+// Tarifs (public - pour affichage)
+Route::get('/tarifs/route', [App\Http\Controllers\TarifController::class, 'getTarifsForRoute']);
+
 // Tickets (public - for verification)
 Route::get('/tickets/{ticketNumber}', [TicketController::class, 'showByNumber']);
 Route::get('/tickets/{ticketNumber}/pdf', [PdfController::class, 'generateTicketPdf']);
+Route::post('/tickets/{ticketNumber}/download', [TicketController::class, 'markAsDownloaded']);
 
-// Comments (public - read only approved)
+// Comments
 Route::get('/comments', [CommentController::class, 'index']);
+// Allow guests to submit comments (name/email required when not authenticated)
+Route::post('/comments', [CommentController::class, 'store']);
+
+// Reservations (public - allow guest bookings)
+Route::post('/reservations', [ReservationController::class, 'store']);
+
+// Payments (public - allow guest payments)
+Route::post('/payments/initiate', [PaymentController::class, 'initiate']);
+Route::post('/payments/verify', [PaymentController::class, 'verify']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -83,21 +116,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     
-    // Reservations
-    Route::post('/reservations', [ReservationController::class, 'store']);
+    // Reservations (authenticated)
+    Route::get('/reservations', [ReservationController::class, 'index']);
     Route::get('/reservations/{id}', [ReservationController::class, 'show']);
+    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
     Route::get('/reservations/user/{userId}', [ReservationController::class, 'getUserReservations']);
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel']);
+    Route::post('/reservations/{id}/extend-delay', [ReservationController::class, 'extendDelay'])->middleware('admin');
     
-    // Payments
-    Route::post('/payments/initiate', [PaymentController::class, 'initiate']);
-    Route::post('/payments/verify', [PaymentController::class, 'verify']);
+    // Admin - Payments
+    Route::middleware('admin')->group(function () {
+        Route::get('/payments', [PaymentController::class, 'index']);
+        Route::get('/payments/{id}', [PaymentController::class, 'show']);
+        Route::post('/payments/{id}/refund', [PaymentController::class, 'refund']);
+    });
     
     // Tickets
     Route::get('/tickets/user/{userId}', [TicketController::class, 'getUserTickets']);
     
     // Comments
-    Route::post('/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
     Route::get('/comments/user/{userId}', [CommentController::class, 'getUserComments']);
     
@@ -123,6 +160,15 @@ Route::middleware('auth:sanctum')->group(function () {
         
         // Statistics
         Route::get('/statistics/dashboard', [StatisticsController::class, 'getDashboardStats']);
+        
+        // User Management
+        Route::get('/users', [UserManagementController::class, 'index']);
+        Route::get('/users/statistics', [UserManagementController::class, 'statistics']);
+        Route::get('/users/{id}', [UserManagementController::class, 'show']);
+        Route::put('/users/{id}', [UserManagementController::class, 'update']);
+        Route::delete('/users/{id}', [UserManagementController::class, 'destroy']);
+        Route::post('/users/{id}/activate', [UserManagementController::class, 'activate']);
+        Route::post('/users/{id}/deactivate', [UserManagementController::class, 'deactivate']);
     });
 });
 
