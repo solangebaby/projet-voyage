@@ -3,122 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    /**
-     * Register a new user
-     */
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:20',
-            'cni_number' => 'required|regex:/^[A-Za-z0-9]{9,12}$/',
-            'civility' => 'nullable|in:Mr,Mrs,Miss',
-            'gender' => 'required|in:Homme,Femme',
-        ]);
+   public function setupAccount(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email'                 => 'required|email|unique:users,email',
+        'password'              => 'required|min:6|confirmed',
+        'reservation_id'        => 'required', // On valide juste la présence ici pour plus de souplesse
+        'passenger_first_name'  => 'required|string',
+        'passenger_last_name'   => 'required|string',
+        'passenger_phone'       => 'nullable|string', // AJOUTÉ : pour éviter l'erreur 422
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $user = User::create([
-            'name' => $request->name,
-            'first_name' => $request->first_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'cni_number' => $request->cni_number,
-            'civility' => $request->civility,
-            'gender' => $request->gender,
-            'role' => $request->role ?? 'voyageur',
-            'status' => 'active',
-        ]);
-
-        // Create token for immediate authentication
-        $token = $user->createToken('auth_token')->plainTextToken;
-
+    if ($validator->fails()) {
         return response()->json([
-            'success' => true,
-            'message' => 'User registered successfully',
-            'data' => [
-                'user' => $user,
-                'token' => $token
-            ]
-        ], 201);
+            'success' => false, 
+            'errors' => $validator->errors()
+        ], 422);
     }
 
-    /**
-     * Login user
-     */
-    public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+    // 1. Créer l'utilisateur
+    $user = User::create([
+        'name'       => $request->passenger_last_name,
+        'first_name' => $request->passenger_first_name,
+        'email'      => $request->email,
+        'password'   => Hash::make($request->password),
+        'role'       => 'voyageur',
+        'status'     => 'active',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid credentials'
-            ], 401);
-        }
-
-        $user = Auth::user();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Login successful',
-            'data' => [
-                'user' => $user,
-                'token' => $token
-            ]
-        ]);
+    // 2. Lier la réservation
+    // On cherche l'ID soit dans reservation_id soit via le modèle si nécessaire
+    $resId = $request->reservation_id;
+    $reservation = Reservation::find($resId);
+    
+    if ($reservation) {
+        $reservation->user_id = $user->id;
+        $reservation->passenger_email = $user->email;
+        $reservation->save();
     }
 
-    /**
-     * Logout user
-     */
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
+    $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Logged out successfully'
-        ]);
-    }
+    return response()->json([
+        'success' => true,
+        'token'   => $token,
+        'user'    => $user
+    ], 201);
+}
 
-    /**
-     * Get authenticated user
-     */
-    public function user(Request $request)
-    {
+    public function login(Request $request) {
+        $request->validate(['email' => 'required|email', 'password' => 'required']);
+        $user = User::where('email', $request->email)->first();
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Identifiants invalides'], 401);
+        }
         return response()->json([
-            'success' => true,
-            'data' => $request->user()
+            'token' => $user->createToken('token')->plainTextToken,
+            'user' => $user
         ]);
     }
 }

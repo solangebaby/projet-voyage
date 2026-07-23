@@ -7,12 +7,15 @@ import './i18n/config'
 import { BrowserRouter } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ErrorBoundary from './components/ErrorBoundary';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-      <Toaster position='top-left' />
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <App />
+        <Toaster position='top-left' />
+      </BrowserRouter>
+    </ErrorBoundary>
   </React.StrictMode>,
 )

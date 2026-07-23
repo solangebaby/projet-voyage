@@ -75,7 +75,7 @@ const BusFleetManagement = () => {
       
       console.log('Fetching buses with token:', token?.substring(0, 20) + '...');
       
-      const response = await axios.get('http://localhost:8000/api/fleet/buses', {
+      const response = await axios.get('http://localhost:8000/api/admin/fleet/buses', {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -120,7 +120,7 @@ const BusFleetManagement = () => {
         // Update bus
         console.log('Updating bus:', editingBus.id);
         const response = await axios.put(
-          `http://localhost:8000/api/fleet/buses/${editingBus.id}`,
+          `http://localhost:8000/api/admin/fleet/buses/${editingBus.id}`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -139,7 +139,7 @@ const BusFleetManagement = () => {
         // Create bus
         console.log('Creating new bus');
         const response = await axios.post(
-          'http://localhost:8000/api/fleet/buses',
+          'http://localhost:8000/api/admin/fleet/buses',
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -193,7 +193,7 @@ const BusFleetManagement = () => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:8000/api/fleet/buses/${bus.id}`,
+        `http://localhost:8000/api/admin/fleet/buses/${bus.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       

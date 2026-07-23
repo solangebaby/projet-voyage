@@ -9,6 +9,8 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Log;
+
 use App\Models\Reservation;
 
 class TicketConfirmation extends Mailable
@@ -48,7 +50,7 @@ class TicketConfirmation extends Mailable
         $this->trip->load(['departureAgency', 'arrivalAgency', 'departure', 'destination', 'bus']);
         
         return new Content(
-            view: 'emails.ticket',
+            view: 'emails.ticket-mobile',
             with: [
                 'ticketNumber' => $this->ticket->ticket_number,
                 'passengerName' => $this->reservation->passenger_name,
@@ -94,7 +96,7 @@ class TicketConfirmation extends Mailable
             
             return [];
         } catch (\Exception $e) {
-            \Log::error('Failed to attach ticket PDF', ['error' => $e->getMessage()]);
+            Log::error('Failed to attach ticket PDF', ['error' => $e->getMessage()]);
             return [];
         }
     }

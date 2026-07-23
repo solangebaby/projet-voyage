@@ -26,7 +26,7 @@ const Services = () => {
   }, []);
 
   return (
-    <section id="services" className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-20 px-6">
+    <section id="services" className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-12 px-8">
       <Image image={GroupOfPlus} alt="Vector" className="absolute top-0 right-4 lg:h-36 h-24" />
       <main className="w-full pt-20 flex flex-col gap-3 items-center justify-center">
         <Text as="p" className="font-light text-base text-color3/80 tracking-widest uppercase">
@@ -61,3 +61,5 @@ const Services = () => {
 };
 
 export default Services;
+
+

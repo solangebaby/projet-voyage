@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Mail\UserCredentialsActivated;
+use Illuminate\Support\Facades\Log;
 
 class UserManagementController extends Controller
 {
@@ -127,7 +128,7 @@ class UserManagementController extends Controller
                 'data' => $user
             ]);
         } catch (\Exception $e) {
-            \Log::error('Failed to send activation email: ' . $e->getMessage());
+            Log::error('Failed to send activation email: ' . $e->getMessage());
             
             return response()->json([
                 'success' => true,
@@ -140,8 +141,12 @@ class UserManagementController extends Controller
     /**
      * Deactivate a user account (Admin only)
      */
-    public function deactivate($id)
+    public function deactivate(Request $request, $id)
     {
+        if ($request->user()->id == $id) {
+            return response()->json(['success' => false, 'message' => 'Vous ne pouvez pas désactiver votre propre compte'], 400);
+        }
+
         $user = User::find($id);
 
         if (!$user) {
@@ -187,7 +192,7 @@ class UserManagementController extends Controller
             'first_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $id,
             'phone' => 'sometimes|string|max:20',
-            'role' => 'sometimes|in:admin,voyageur',
+            'role' => 'sometimes|in:admin,voyageur,agence',
             'status' => 'sometimes|in:active,inactive',
         ]);
 

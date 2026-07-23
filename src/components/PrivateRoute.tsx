@@ -1,29 +1,22 @@
-// src/components/ProtectedRoute.tsx
-import { Navigate } from "react-router-dom";
-import { authService } from "../services/api";
-import toast from "react-hot-toast";
-import { ReactNode } from "react";
+import { Navigate } from 'react-router-dom';
+import { authService } from '../services/api';
 
-interface ProtectedRouteProps {
-  children: ReactNode;
-  allowedRole?: 'admin' | 'voyageur';
+interface PrivateRouteProps {
+  children: React.ReactNode;
+  allowedRole: 'admin' | 'agence' | 'voyageur';
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRole }) => {
-  const isAuthenticated = authService.isAuthenticated();
+const PrivateRoute = ({ children, allowedRole }: PrivateRouteProps) => {
   const user = authService.getUser();
-
-  if (!isAuthenticated) {
-    toast.error("Veuillez vous connecter pour accéder à cette page");
-    return <Navigate to="/admin/login" replace />;
+  if (!user || !authService.isAuthenticated()) {
+    return <Navigate to="/login" replace />;
   }
-
-  if (allowedRole && user?.role !== allowedRole) {
-    toast.error("Vous n'avez pas les permissions nécessaires");
-    return <Navigate to="/" replace />;
+  if (user.role !== allowedRole) {
+    if (user.role === 'admin') return <Navigate to="/admin-dashboard" replace />;
+    if (user.role === 'agence') return <Navigate to="/agency-dashboard" replace />;
+    return <Navigate to="/traveler-dashboard" replace />;
   }
-
   return <>{children}</>;
 };
 
-export default ProtectedRoute;
+export default PrivateRoute;

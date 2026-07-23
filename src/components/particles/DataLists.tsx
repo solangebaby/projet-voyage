@@ -1,476 +1,114 @@
-// export const NavLinks = [
-//     {
-//         name: "Destination",
-//         url: "/"
-//     },
-//     {
-//         name: "Bus",
-//         url: "/"
-//     },
-//     {
-//         name: "Travels",
-//         url: "/"
-//     },
-//     {
-//         name: "Bookings",
-//         url: "/"
-//     }
-
-// ];
-
-// export const NavButtons = [
-//     {
-//         name: "Login",
-//         url: "/"
-//     },
-//     {
-//         name: "Signup",
-//         url: "/"
-//     }
-
-// ];
-
-
-// export const HeroTexts = {
-//     firstText: "BEST DESITNATIONS AROUND THE COUNTRY",
-//     secondText: "Travel with peace of mind.",
-//     thirdText: "Trust KCTRIP you won't be disappointed.",
-//     // firstButton: "Find out more",
-//     // secondButton: 'Play Demo'
-// }
-
-
-// export const ServiceTexts = {
-//     firstText: "CATEGORY",
-//     secondText: "We Offer Best Services",
-//     cards: [
-//         {
-//             firstText: "Calculated Weather",
-//             secondText: "Built Wicket longer admire do barton vantity itself do in it."
-//         },
-//         {
-//             firstText: "Best Flight",
-//             secondText: "engrossed listening. Park gate sell they west hard for the."
-//         },
-//         {
-//             firstText: "Local Events",
-//             secondText: "barton vantity itself do in it.Preferred to men it engrossed listening."
-//         },
-//         {
-//             firstText: "Customizition",
-//             secondText: "We deliver outsourced aviation services for military customers."
-//         }
-//     ]
-// }
-
-// export const TopDestinationTexts = {
-//     firstText: "Top selling",
-//     secondText: "Top Destinations",
-//     cards: [
-//         {
-//             country: "Rome, Italy",
-//             price: "5.42k",
-//             duration: "10 days trip"
-//         },
-//         {
-//             country: "London, UK",
-//             price: "4.2k",
-//             duration: "12 days trip"
-//         },
-//         {
-//             country: "Paris, France",
-//             price: "15k",
-//             duration: "26 days trip"
-//         },
-//         {
-//             country: "New York, USA",
-//             price: "4.5k",
-//             duration: "8 days trip"
-//         },
-//         {
-//             country: "Warsaw, Poland",
-//             price: "3.9k",
-//             duration: "14 days trip"
-//         },
-//         {
-//             country: "Dubai, UAE",
-//             price: "9.2k",
-//             duration: "17 days trip"
-//         },
-//     ]
-// }
-
-// export const BookingStepsTexts = {
-//     firstText: "Easy and Fast",
-//     secondText: "Book your next trip in 3 easy steps",
-//     listOfSteps: [
-//         {
-//             text: "Choose Destination lorem ipsum dolor sit amet, consectetur adipiscing elit.Urna, tortor tempus."
-//         },
-//         {
-//             text: "Make Payment lorem ipsum dolor sit amet, consectetur adipiscing elit.Uma, totor tempus."
-//         },
-//         {
-//             text: "Reach Airport on Selected Date lorem ipsum dolor sit amet.consectetur adipiscing elit.Uma totor tempus."
-//         }
-//     ],
-//     cardOne:
-//     {
-//         name: "Trip To Greece",
-//         date: "14-29 June  |  by Robbin Jobs",
-//         people: "24 people going"
-//     },
-//     cardTwo: {
-//         status: "Ongoing",
-//         destination: "Trip to Rome",
-//         completion: "40% Completed"
-//     }
-
-// }
-
-// export const TestimonialTexts = {
-//     firstText: "TESTIMONIALS",
-//     secondText: "What people say about Us.",
-//     feedBacks: [
-//         {
-//             text: "You did a fabulous job. There were no hitches. Thank you again for all your work planning this trip.",
-//             person: "Mike taylor",
-//             location: "Lahore, Pakistan"
-//         },
-//         {
-//             text: "Jadoo was great with the entire process from planning to updates during the trip. We had 11 people and everything was perfectly executed. We appreciate all of her hard work. It was truly the trip of a lifetime. Thank you!",
-//             person: "Gina",
-//             location: "Owerri, Nigeria"
-//         },
-//         {
-//             text: "Booking through you was very easy and made our lives so much easier. I have nothing bad to say! Thank you for giving us tips and guidance before we left on what to bring and such, that was very helpful!",
-//             person: "Emma",
-//             location: "Vancouver, Canada"
-//         },
-//         {
-//             text: "Thank you for your recommendation and putting the trip together. The resort was absolutely beautiful. The infinity pools, the palm trees in the main pool, the infinity pool in out preferred area overlooking the gulf and the golf course were exceptional....",
-//             person: "Loveth",
-//             location: "Lagos, Nigeria"
-//         },
-//     ],
-// }
-
-// export const NewsletterTexts = {
-//     firstText: "Subscribe to get information, latest news and other interesting offers about Jadoo.",
-//     placeholderText: "Your email",
-//     buttonText: "Subscribe"
-// }
-
-// export const FooterTexts = {
-//     underLogoText: "Book your trip in minutes, get full control for much longer.",
-//     quickLinks: {
-//         caption: "Quick Links",
-//         links: [
-//             {
-//                 name: "Destination",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Hotels",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Flights",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Bookings",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Login",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Signup",
-//                 url: "/"
-//             }
-//         ]
-//     },
-//     contacts: {
-//         caption: "Contacts",
-//         links: [
-//             {
-//                 name: "FAQs",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Help",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Policies",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Terms & Conditions",
-//                 url: "/"
-//             }
-//         ]
-//     },
-//     more: {
-//         caption: "More",
-//         links: [
-//             {
-//                 name: "Career",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Airlines",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Airline Fees",
-//                 url: "/"
-//             },
-//             {
-//                 name: "Low Fare Tips",
-//                 url: "/"
-//             }
-//         ]
-//     }
-// }
-export const NavLinks = [
-    {
-        name: "Destinations",
-        url: "#top-destinations"
-    },
-    {
-        name: "Services",
-        url: "#services"
-    },
-    {
-        name: "Bus",
-        url: "/bus"
-    },
-    {
-        name: "Travels",
-        url: "/travels"
-    },
-    {
-        name: "Bookings",
-        url: "#booking"
-    }
-
-];
-
-export const NavButtons = [
-    {
-        name: "Login",
-        url: "/login"
-    },
-    {
-        name: "Signup",
-        url: "/signup"
-    }
-
-];
-
-
-export const HeroTexts = {
-    firstText: "BEST DESTINATIONS AROUND CAMEROON",
-    secondText: "Travel with comfort and confidence.",
-    thirdText: "Trust KCTrip for your journeys across Cameroon.",
-}
-
+export const BookingStepsTexts = {
+  firstText: "COMMENCER VOTRE VOYAGE",
+  secondText: "Réservez en 3 étapes simples",
+  listOfSteps: [
+    { text: "Recherchez votre destination préférée et consultez les offres disponibles." },
+    { text: "Sélectionnez vos dates de voyage et choisissez le meilleur prix." },
+    { text: "Confirmez votre réservation et recevez votre billet directement." },
+  ],
+  cardOne: {
+    name: "Voyage à Yaoundé",
+    date: "25 Décembre 2024",
+    people: "4 personnes",
+  },
+  cardTwo: {
+    status: "En cours de traitement",
+    destination: "Vers Limbé",
+    completion: "40% complété",
+  },
+};
 
 export const ServiceTexts = {
-    firstText: "OUR SERVICES",
-    secondText: "We Offer Best Services",
-    cards: [
-        {
-            firstText: "Professional Drivers",
-            secondText: "Our experienced drivers ensure your safety and comfort throughout your journey."
-        },
-        {
-            firstText: "Comfortable Buses",
-            secondText: "Modern, well-maintained buses with comfortable seating for your trip."
-        },
-        {
-            firstText: "Parcel Delivery",
-            secondText: "Fast and secure parcel delivery between major cities and agencies."
-        },
-        {
-            firstText: "24/7 Support",
-            secondText: "Our customer support team is always available to assist you."
-        }
-    ]
-}
-
-export const TopDestinationTexts = {
-    firstText: "Popular Routes",
-    secondText: "Top Destinations in Cameroon",
-    cards: [
-        {
-            country: "Yaoundé → Douala",
-            price: "From 5,000 FCFA",
-            duration: "3h 30m"
-        },
-        {
-            country: "Yaoundé → Kribi",
-            price: "From 4,000 FCFA",
-            duration: "2h 30m"
-        },
-        {
-            country: "Douala → Limbé",
-            price: "From 2,000 FCFA",
-            duration: "1h 00m"
-        },
-        {
-            country: "Yaoundé → Bafoussam",
-            price: "From 5,500 FCFA",
-            duration: "4h 00m"
-        },
-        {
-            country: "Douala → Bafoussam",
-            price: "From 4,500 FCFA",
-            duration: "3h 00m"
-        },
-        {
-            country: "Yaoundé → Bamenda",
-            price: "From 7,000 FCFA",
-            duration: "5h 30m"
-        }
-    ]
-}
-
-export const BookingStepsTexts = {
-    firstText: "Easy and Fast",
-    secondText: "Book your next trip in 3 easy steps",
-    listOfSteps: [
-        {
-            text: "Search for your destination and select your preferred travel date and time from available routes."
-        },
-        {
-            text: "Choose your seat from our interactive bus layout and provide your passenger information."
-        },
-        {
-            text: "Complete your payment securely and receive your e-ticket instantly via email."
-        }
-    ],
-    cardOne:
+  firstText: "NOS SERVICES",
+  secondText: "Découvrez nos services de transport premium",
+  cards: [
     {
-        name: "Trip to Douala",
-        date: "15 Dec 2025  |  KCTrip",
-        people: "35 people going"
+      firstText: "Confort supérieur",
+      secondText: "Des sièges spacieux et climatisés pour votre confort maximum.",
     },
-    cardTwo: {
-        status: "Confirmed",
-        destination: "Yaoundé - Douala",
-        completion: "80% Seats Booked"
-    }
-
-}
+    {
+      firstText: "Transport sécurisé",
+      secondText: "Conducteurs expérimentés et véhicules entretenus régulièrement.",
+    },
+    {
+      firstText: "Prix compétitifs",
+      secondText: "Les meilleures tarifs du marché avec qualité garantie.",
+    },
+    {
+      firstText: "Service 24/7",
+      secondText: "Support client disponible à tout moment pour vous assister.",
+    },
+  ],
+};
 
 export const TestimonialTexts = {
-    firstText: "TESTIMONIALS",
-    secondText: "What people say about Us.",
-    feedBacks: [
-        {
-            text: "Excellent service! The journey from Yaoundé to Douala was smooth and comfortable. The staff was very helpful and professional.",
-            person: "Michel Tagne",
-            location: "Yaoundé, Cameroon"
-        },
-        {
-            text: "KCTrip made our group trip seamless! The booking process was easy, the bus was comfortable, and the driver was professional. We traveled with 11 people and everything was perfectly organized. Highly recommended!",
-            person: "Gina",
-            location: "Douala, Cameroon"
-        },
-        {
-            text: "Booking through KCTrip was incredibly easy! The online platform is user-friendly and the customer support team helped me every step of the way. Will definitely use again!",
-            person: "Emma Njoya",
-            location: "Bafoussam, Cameroon"
-        },
-        {
-            text: "I travel frequently between cities for business and KCTrip is my go-to choice. Clean buses, punctual departures, and professional service every time. Keep up the great work!",
-            person: "Loveth Mbah",
-            location: "Bamenda, Cameroon"
-        },
-    ],
-}
+  firstText: "AVIS DES CLIENTS",
+  secondText: "Ce que nos voyageurs disent",
+  feedBacks: [
+    {
+      text: "Service excellent et très professionnel. Les conducteurs sont courtois et ponctuels. Je recommande vivement!",
+      person: "Marie Dupont",
+      location: "Note: 5/5",
+    },
+    {
+      text: "Belle expérience de voyage. Les bus sont confortables et bien entretenus. Tarifs très raisonnables.",
+      person: "Jean Mbarga",
+      location: "Note: 5/5",
+    },
+    {
+      text: "Très satisfait de mon voyage. Ponctualité garantie et équipe sympathique. À bientôt!",
+      person: "Sophie Ngoumou",
+      location: "Note: 4/5",
+    },
+    {
+      text: "Excellente plateforme pour réserver. Processus simple et rapide. Merci pour ce service de qualité.",
+      person: "Pierre Ekane",
+      location: "Note: 5/5",
+    },
+  ],
+};
 
-export const NewsletterTexts = {
-    firstText: "Subscribe to get information, latest news and special offers from KCTrip.",
-    placeholderText: "Your email",
-    buttonText: "Subscribe"
-}
+export const TopDestinationTexts = {
+  firstText: "DESTINATIONS POPULAIRES",
+  secondText: "Explorez le Cameroun",
+  cards: [
+    { country: "Douala → Yaoundé",    price: "À partir de 5 000 FCFA", duration: "~4h de trajet" },
+    { country: "Douala → Bafoussam",  price: "À partir de 3 500 FCFA", duration: "~4h30 de trajet" },
+    { country: "Douala → Limbé",      price: "À partir de 2 500 FCFA", duration: "~2h de trajet" },
+    { country: "Yaoundé → Bamenda",   price: "À partir de 4 000 FCFA", duration: "~5h de trajet" },
+    { country: "Douala → Kribi",      price: "À partir de 3 000 FCFA", duration: "~3h de trajet" },
+    { country: "Yaoundé → Garoua",    price: "À partir de 8 000 FCFA", duration: "~8h de trajet" },
+  ],
+};
 
 export const FooterTexts = {
-    underLogoText: "Book your bus ticket in minutes, travel with comfort and confidence across Cameroon.",
-    quickLinks: {
-        caption: "Quick Links",
-        links: [
-            {
-                name: "Destinations",
-                url: "/"
-            },
-            {
-                name: "Routes",
-                url: "/"
-            },
-            {
-                name: "Search Tickets",
-                url: "/tickets"
-            },
-            {
-                name: "My Bookings",
-                url: "/traveler/dashboard"
-            },
-            {
-                name: "Login",
-                url: "/admin/login"
-            },
-            {
-                name: "Register",
-                url: "/signup"
-            }
-        ]
-    },
-    contacts: {
-        caption: "Contacts",
-        links: [
-            {
-                name: "FAQs",
-                url: "/"
-            },
-            {
-                name: "Help",
-                url: "/"
-            },
-            {
-                name: "Policies",
-                url: "/"
-            },
-            {
-                name: "Terms & Conditions",
-                url: "/"
-            }
-        ]
-    },
-    more: {
-        caption: "More",
-        links: [
-            {
-                name: "Career",
-                url: "/"
-            },
-            {
-                name: "Airlines",
-                url: "/"
-            },
-            {
-                name: "Airline Fees",
-                url: "/"
-            },
-            {
-                name: "Low Fare Tips",
-                url: "/"
-            }
-        ]
-    }
-}
+  underLogoText: "Marketplace de tickets de transport au Cameroun. Voyagez avec confort et confiance.",
+
+  quickLinks: {
+    caption: "Liens rapides",
+    links: [
+      { name: "Accueil", url: "/" },
+      { name: "Destinations", url: "/#destinations" },
+      { name: "Services", url: "/#services" },
+      { name: "À propos", url: "/#about" },
+    ],
+  },
+
+  contacts: {
+    caption: "Contact",
+    links: [
+      { name: "contact@marketplace-cm.com", url: "/" },
+      { name: "+237 650 000 000", url: "/" },
+      { name: "Douala, Cameroun", url: "/" },
+    ],
+  },
+
+  more: {
+    caption: "Plus",
+    links: [
+      { name: "Conditions d'utilisation", url: "/" },
+      { name: "Politique de confidentialité", url: "/" },
+      { name: "Aide & Support", url: "/" },
+    ],
+  },
+};

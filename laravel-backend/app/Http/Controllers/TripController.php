@@ -13,10 +13,29 @@ class TripController extends Controller
      */
     public function index()
     {
-        $trips = Trip::with(['bus', 'departure', 'destination', 'departureAgency', 'arrivalAgency'])
-            ->where('status', 'active')
-            ->orderBy('departure_date', 'asc')
-            ->get();
+        $trips = Trip::with([
+            'bus', 
+            'departure', 
+            'destination', 
+            'departureAgency', 
+            'arrivalAgency',
+            'agency' // ✅ charger l'agence principale
+        ])
+        ->where('status', 'active')
+        ->orderBy('departure_date', 'asc')
+        ->get();
+
+        // Ajouter reserved seats et available seats
+        $trips->transform(function ($trip) {
+            $trip->reserved_seats_count  = $trip->reservations()
+                ->whereNotIn('status', ['cancelled'])->count();
+            $trip->available_seats_count = $trip->bus->total_seats - $trip->reserved_seats_count;
+
+            // Ajouter objet agency pour le front
+            $trip->agency_data = $trip->agency;
+
+            return $trip;
+        });
 
         return response()->json([
             'success' => true,
@@ -29,33 +48,41 @@ class TripController extends Controller
      */
     public function search(Request $request)
     {
-        $query = Trip::with(['bus', 'departure', 'destination', 'departureAgency', 'arrivalAgency'])
-            ->where('status', 'active');
+        $query = Trip::with([
+            'bus', 
+            'departure', 
+            'destination', 
+            'departureAgency', 
+            'arrivalAgency', 
+            'agency' // ✅ charger l'agence principale
+        ])
+        ->where('status', 'active')
+        ->where('validation_status', 'active'); // seulement voyages approuvés
 
-        if ($request->has('departure')) {
-            $query->whereHas('departure', function($q) use ($request) {
-                $q->where('city_name', 'like', '%' . $request->departure . '%');
-            });
+        if ($request->filled('departure_id')) {
+            $query->where('departure_id', $request->departure_id);
         }
 
-        if ($request->has('destination')) {
-            $query->whereHas('destination', function($q) use ($request) {
-                $q->where('city_name', 'like', '%' . $request->destination . '%');
-            });
+        if ($request->filled('destination_id')) {
+            $query->where('destination_id', $request->destination_id);
         }
 
-        if ($request->has('date')) {
+        if ($request->filled('date')) {
             $query->whereDate('departure_date', $request->date);
         }
 
         $trips = $query->orderBy('departure_date', 'asc')->get();
 
-        // Add reserved seats count for each trip
-        $trips->each(function($trip) {
-            $trip->reserved_seats_count = $trip->reservations()
-                ->whereNotIn('status', ['cancelled'])
-                ->count();
+        // Ajouter reserved seats et available seats
+        $trips->transform(function ($trip) {
+            $trip->reserved_seats_count  = $trip->reservations()
+                ->whereNotIn('status', ['cancelled'])->count();
             $trip->available_seats_count = $trip->bus->total_seats - $trip->reserved_seats_count;
+
+            // Ajouter objet agency pour le front
+            $trip->agency_data = $trip->agency;
+
+            return $trip;
         });
 
         return response()->json([
@@ -88,7 +115,6 @@ class TripController extends Controller
             ], 422);
         }
 
-        // Get bus total seats
         $bus = \App\Models\Bus::find($request->bus_id);
 
         $trip = Trip::create([
@@ -99,7 +125,6 @@ class TripController extends Controller
             'departure_time' => $request->departure_time,
             'arrival_date' => $request->arrival_date,
             'arrival_time' => $request->arrival_time,
-            // available_seats is calculated dynamically
             'occupied_seats' => [],
             'distance_km' => $request->distance_km,
             'status' => 'active'
@@ -108,7 +133,7 @@ class TripController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Trip created successfully',
-            'data' => $trip->load(['bus', 'departure', 'destination'])
+            'data' => $trip->load(['bus', 'departure', 'destination', 'agency'])
         ], 201);
     }
 
@@ -117,7 +142,14 @@ class TripController extends Controller
      */
     public function show(string $id)
     {
-        $trip = Trip::with(['bus', 'departure', 'destination', 'departureAgency', 'arrivalAgency'])->find($id);
+        $trip = Trip::with([
+            'bus', 
+            'departure', 
+            'destination', 
+            'departureAgency', 
+            'arrivalAgency', 
+            'agency' // ✅ charger l'agence
+        ])->find($id);
 
         if (!$trip) {
             return response()->json([
@@ -126,7 +158,6 @@ class TripController extends Controller
             ], 404);
         }
 
-        // Get all reserved seats for this trip (excluding cancelled reservations)
         $reservedSeats = $trip->reservations()
             ->whereNotIn('status', ['cancelled'])
             ->pluck('selected_seat')
@@ -134,6 +165,7 @@ class TripController extends Controller
 
         $tripData = $trip->toArray();
         $tripData['reserved_seats'] = $reservedSeats;
+        $tripData['agency_data'] = $trip->agency;
 
         return response()->json([
             'success' => true,
@@ -184,7 +216,7 @@ class TripController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Trip updated successfully',
-            'data' => $trip->load(['bus', 'departure', 'destination'])
+            'data' => $trip->load(['bus', 'departure', 'destination', 'agency'])
         ]);
     }
 
@@ -202,7 +234,6 @@ class TripController extends Controller
             ], 404);
         }
 
-        // Check if trip has reservations
         if ($trip->reservations()->count() > 0) {
             return response()->json([
                 'success' => false,

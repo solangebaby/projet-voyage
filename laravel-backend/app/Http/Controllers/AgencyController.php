@@ -157,4 +157,28 @@ class AgencyController extends Controller
             'message' => 'Agency deleted successfully'
         ]);
     }
+    /**
+ * Get the profile of the authenticated agency
+ */
+public function profile(Request $request)
+{
+    $agency = $request->user()->agency()->with('destination')->first();
+
+    if (!$agency) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Agency not found'
+        ], 404);
+    }
+
+    // Inclure l'email depuis l'user lié
+    $agencyData = $agency->toArray();
+    $agencyData['email'] = $request->user()->email;
+    $agencyData['status'] = $request->user()->status;
+
+    return response()->json([
+        'success' => true,
+        'data' => $agencyData
+    ]);
+}
 }

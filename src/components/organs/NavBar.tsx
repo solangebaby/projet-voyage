@@ -1,141 +1,193 @@
 import { useState, useEffect } from "react"
-import { Image } from "../atoms/Image";
-import { Button } from "../atoms/Button"
+import { useNavigate, NavLink, useLocation } from "react-router-dom"
+import { useTranslation } from "react-i18next"
+import { authService } from "../../services/api"
 import Logo from "../../assets/logo3.jpg"
-import { NavButtons, NavLinks } from "../particles/DataLists"
-import { List } from "../atoms/List";
-import { NavLink, useNavigate } from "react-router-dom";
-import { ArrowCircleRight, CirclesFour } from "@phosphor-icons/react";
-import { Slide } from "react-awesome-reveal";
-import LanguageSwitcher from "../LanguageSwitcher";
-
-
+import { ArrowCircleRight, CirclesFour } from "@phosphor-icons/react"
+import { Slide } from "react-awesome-reveal"
+import LanguageSwitcher from "../LanguageSwitcher"
 
 const NavBar = () => {
-    const navigate = useNavigate()
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
-    const [open, setOpen] = useState(false)
-    // const [scrollY, setScrollY] = useState(0)
-    const [navBarColor, setNavBarColor] = useState(false)
+  const user = authService.getUser()
+  const isAuth = authService.isAuthenticated() && !!user
 
-    const handleToggle = () => {
-        setOpen(!open)
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  useEffect(() => { setOpen(false) }, [location.pathname])
+
+  const handleLogout = () => {
+    authService.logout()
+    navigate("/")
+  }
+
+  const getDashboardLink = () => {
+    if (!user) return "/login"
+    if (user.role === "admin") return "/admin-dashboard"
+    if (user.role === "agence") return "/agency-dashboard"
+    return "/traveler-dashboard"
+  }
+
+  const navLinks = [
+    { name: t('nav.home'), url: "/" },
+    { name: t('nav.services'), url: "/#services" },
+    { name: t('nav.destinations'), url: "/#destinations" },
+    { name: t('nav.about'), url: "/#about" },
+  ]
+
+  const handleAnchorClick = (e: React.MouseEvent, url: string) => {
+    if (url.startsWith("/#")) {
+      e.preventDefault()
+      if (location.pathname !== "/") {
+        navigate("/")
+        setTimeout(() => {
+          const el = document.getElementById(url.replace("/#", ""))
+          el?.scrollIntoView({ behavior: "smooth" })
+        }, 300)
+      } else {
+        const el = document.getElementById(url.replace("/#", ""))
+        el?.scrollIntoView({ behavior: "smooth" })
+      }
     }
+  }
 
-    const listenScrollEvent = () => {
-        window.scrollY > 10 ? setNavBarColor(true) : setNavBarColor(false);
-    };
+  const linkClass = "relative text-sm font-medium text-color3 hover:text-color2 transition-colors duration-200 pb-0.5 border-b-2 border-transparent hover:border-color2"
 
-    useEffect(() => {
-        window.addEventListener("scroll", listenScrollEvent);
-        return () => {
-            window.removeEventListener("scroll", listenScrollEvent);
-        };
-    }, []);
+  return (
+    <header className="w-full fixed z-50 top-0 left-0">
+      <Slide direction="down" triggerOnce>
+        <nav className={`w-full transition-all duration-300 ${scrolled || open ? "bg-white shadow-soft" : "bg-transparent"} lg:px-16 md:px-8 px-4`}>
+          <div className="flex items-center justify-between h-20">
 
+            {/* Logo */}
+            <a href="/" className="flex-shrink-0">
+              <img src={Logo} alt="Logo" className="h-12 w-auto object-contain rounded-lg" />
+            </a>
 
+            {/* Desktop nav — centered links aligned with logo height */}
+            <div className="lg:flex hidden items-center gap-8 flex-1 justify-center">
+              <ul className="flex items-center gap-7">
+                {navLinks.map((link, i) => (
+                  <li key={i}>
+                    {link.url.startsWith("/#") ? (
+                      <a href={link.url} onClick={e => handleAnchorClick(e, link.url)} className={linkClass}>
+                        {link.name}
+                      </a>
+                    ) : (
+                      <NavLink to={link.url} className={({ isActive }) =>
+                        `${linkClass} ${isActive ? 'text-color2 border-color2' : ''}`
+                      }>
+                        {link.name}
+                      </NavLink>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-    return (
-        <header className="w-full h-auto bg-transparent overflow-x-hidden fixed z-50 top-0 left-0">
-            <Slide direction="down">
-                <nav className={`w-full md:h-24 h-20 ${navBarColor ? "bg-white" : "bg-transparent"} lg:px-24 md:px-12 px-8 flex justify-between items-center`}>
-                    <Image as="a" href="/" className="md:h-500 h-20" image={Logo} alt="Logo" />
-                    <div className="lg:flex hidden items-center gap-20">
-                        <ul className="flex items-center justify-center gap-8">
-                            {
-                                NavLinks.map((navlink, index) => (
-                                    <List className="w-full text-base" key={index}>
-                                        {navlink.url.startsWith('#') ? (
-                                          <a
-                                            href={navlink.url}
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              const el = document.getElementById(navlink.url.replace('#', ''));
-                                              el?.scrollIntoView({ behavior: 'smooth' });
-                                            }}
-                                            className="relative inline-block overflow-hidden pt-2 pl-2 before:w-2 before:h-2 before:bg-color2 before:absolute before:top-2 before:-left-10 before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0.5 after:w-0.5 after:h-3 after:bg-color2 after:absolute after:left-1 after:-top-10 hover:after:top-3.5 after:transition-all after:duration-200 after:ease-in"
-                                          >
-                                            {navlink.name}
-                                          </a>
-                                        ) : (
-                                          <NavLink to={navlink.url} className="relative inline-block overflow-hidden pt-2 pl-2 before:w-2 before:h-2 before:bg-color2 before:absolute before:top-2 before:-left-10 before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0.5 after:w-0.5 after:h-3 after:bg-color2 after:absolute after:left-1 after:-top-10 hover:after:top-3.5 after:transition-all after:duration-200 after:ease-in">{navlink.name}</NavLink>
-                                        )}
-                                    </List>
-                                ))
-                            }
+            {/* Desktop right side */}
+            <div className="lg:flex hidden items-center gap-3 flex-shrink-0">
+              <LanguageSwitcher />
+              {isAuth ? (
+                <>
+                  <button
+                    onClick={() => navigate(getDashboardLink())}
+                    className="px-4 py-2 text-sm font-semibold text-color3 border-2 border-color3 rounded-xl hover:bg-color3 hover:text-white transition-all duration-200"
+                  >
+                    {user?.role === 'admin' ? t('nav.adminDashboard') : user?.role === 'agence' ? t('nav.agencyDashboard') : t('nav.travelerDashboard')}
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 text-sm font-semibold text-white bg-color1 hover:bg-color3 rounded-xl transition-all duration-200"
+                  >
+                    {t('common.logout')}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="px-5 py-2 text-sm font-semibold text-white bg-color2 hover:bg-color3 rounded-xl transition-all duration-200 hover:scale-105"
+                >
+                  {t('auth.login')}
+                </button>
+              )}
+            </div>
 
-                        </ul>
-                        <ul className="flex items-center justify-center gap-6">
-                            {
-                                NavButtons.map((navbutton, index) => (
-                                    <List className="w-full" key={index}>
-                                        <Button onClick={() => navigate(navbutton.url)} type="button" className={`${navbutton.name === "Signup" ? "border-2 border-gray-950 before:top-0" : "before:bottom-0 border-b-2 border-transparent hover:border-gray-950"} py-2 px-8 relative z-10 before:content-[''] before:absolute before:left-0 before:w-full before:h-0 before:bg-color2 before:-z-10 hover:before:h-full before:transition-all before:duration-300 before:ease-in text-base`}>{navbutton.name}</Button>
-                                    </List>
-                                ))
-                            }
-                            <List className="text-gray-950">
-                                <LanguageSwitcher />
-                            </List>
-                        </ul>
-                    </div>
-                    <div className="lg:hidden flex gap-4 items-center">
-                        <LanguageSwitcher />
-                        <div className="hamburger text-gray-950 cursor-pointer" onClick={handleToggle}>
-                            <CirclesFour size={30} color="currentColor" weight="fill" />
-                        </div>
-                    </div>
-                </nav>
-            </Slide>
+            {/* Mobile hamburger */}
+            <div className="lg:hidden flex items-center gap-3">
+              <LanguageSwitcher />
+              <button onClick={() => setOpen(!open)} className="text-color3 p-1">
+                <CirclesFour size={28} weight="fill" />
+              </button>
+            </div>
+          </div>
+        </nav>
+      </Slide>
 
+      {/* Mobile overlay */}
+      <div
+        className={`lg:hidden fixed inset-0 bg-gray-950/80 transition-opacity duration-300 z-40 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        onClick={() => setOpen(false)}
+      />
 
-            {/* Mobile Nav  */}
-            <nav className={`flex justify-end lg:hidden h-screen w-full bg-gray-950/90 fixed top-0  ${open ? "right-0" : "-right-[120vw]"} transition-all duration-500 ease-out`}>
-                <div className={`w-[70%] h-screen bg-white flex flex-col justify-between items-center relative ${open ? "right-0" : "-right-[120vw]"} transition-all duration-500 ease-out delay-300`}>
-                    <section className="w-full px-4 py-6 flex flex-col gap-16">
-                        <div className="w-full flex justify-between items-center">
-                            <Image as="a" href="/" className="md:h-10 h-8" image={Logo} alt="Logo" />
-                            <div className="hamburger text-gray-950 cursor-pointer" onClick={handleToggle}>
-                                <ArrowCircleRight size={25} color="currentColor" weight="fill" />
-                            </div>
-                        </div>
-                        <ul className="flex flex-col gap-3 pl-2">
-                            {
-                                NavLinks.map((navlink, index) => (
-                                    <List className="w-full text-base" key={index}>
-                                        {navlink.url.startsWith('#') ? (
-                                          <a
-                                            href={navlink.url}
-                                            onClick={(e) => {
-                                              e.preventDefault();
-                                              handleToggle();
-                                              const el = document.getElementById(navlink.url.replace('#', ''));
-                                              el?.scrollIntoView({ behavior: 'smooth' });
-                                            }}
-                                            className={`relative overflow-hidden inline-block before:w-full before:h-0.5 before:bg-color2 before:absolute before:bottom-0 before:-left-full before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0 `}
-                                          >
-                                            {navlink.name}
-                                          </a>
-                                        ) : (
-                                          <NavLink to={navlink.url} onClick={handleToggle} className={`relative overflow-hidden inline-block before:w-full before:h-0.5 before:bg-color2 before:absolute before:bottom-0 before:-left-full before:rounded-full before:transition-all before:duration-200 before:ease-in hover:before:left-0 `}>{navlink.name}</NavLink>
-                                        )}
-                                    </List>
-                                ))
-                            }
-                        </ul>
-                    </section>
-                    <ul className="w-full flex items-center justify-center pb-24 gap-4">
-                        {
-                            NavButtons.map((navbutton, index) => (
-                                <List className="w-auto" key={index}>
-                                    <Button onClick={() => navigate(navbutton.url)} type="button" className={`${navbutton.name === "Signup" ? "border-2 border-gray-950 before:top-0" : "before:bottom-0 border-b-2 border-white hover:border-gray-950"} py-1.5 px-5 relative z-10 before:content-[''] before:absolute before:left-0 before:w-full before:h-0 before:bg-color2 before:-z-10 hover:before:h-full before:transition-all before:duration-300 before:ease-in text-base`}>{navbutton.name}</Button>
-                                </List>
-                            ))
-                        }
-                    </ul>
-                </div>
-            </nav>
-        </header >
-    )
+      {/* Mobile drawer */}
+      <div className={`lg:hidden fixed top-0 right-0 h-screen w-72 max-w-[85vw] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out z-50 ${open ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex justify-between items-center px-5 py-4 border-b border-gray-100">
+          <img src={Logo} alt="Logo" className="h-10 w-auto object-contain rounded" />
+          <button onClick={() => setOpen(false)} className="text-color3 hover:text-color1 transition">
+            <ArrowCircleRight size={26} weight="fill" />
+          </button>
+        </div>
+
+        <ul className="flex flex-col px-5 py-6 gap-1">
+          {navLinks.map((link, i) => (
+            <li key={i}>
+              {link.url.startsWith("/#") ? (
+                <a href={link.url} onClick={e => { handleAnchorClick(e, link.url); setOpen(false) }}
+                  className="block py-3 px-3 text-sm font-medium text-color3 hover:text-color2 hover:bg-gray-50 rounded-xl transition">
+                  {link.name}
+                </a>
+              ) : (
+                <NavLink to={link.url} onClick={() => setOpen(false)}
+                  className="block py-3 px-3 text-sm font-medium text-color3 hover:text-color2 hover:bg-gray-50 rounded-xl transition">
+                  {link.name}
+                </NavLink>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        <div className="px-5 mt-auto pb-10 flex flex-col gap-3">
+          {isAuth ? (
+            <>
+              <button onClick={() => { navigate(getDashboardLink()); setOpen(false) }}
+                className="w-full py-3 text-sm font-semibold text-color3 border-2 border-color3 rounded-xl hover:bg-color3 hover:text-white transition">
+                {t('nav.dashboard')}
+              </button>
+              <button onClick={() => { handleLogout(); setOpen(false) }}
+                className="w-full py-3 text-sm font-semibold text-white bg-color1 rounded-xl hover:bg-color3 transition">
+                {t('common.logout')}
+              </button>
+            </>
+          ) : (
+            <button onClick={() => { navigate("/login"); setOpen(false) }}
+              className="w-full py-3 text-sm font-semibold text-white bg-color2 rounded-xl hover:bg-color3 transition">
+              {t('auth.login')}
+            </button>
+          )}
+        </div>
+      </div>
+    </header>
+  )
 }
 
 export default NavBar

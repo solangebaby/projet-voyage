@@ -84,7 +84,7 @@ const CustomerComments = () => {
   };
 
   return (
-    <section className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-10 px-6 my-14">
+    <section className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-12 px-8 my-14">
       <div className="w-full max-w-6xl">
         <div className="text-center mb-10">
           <p className="text-color2 font-semibold tracking-widest">CUSTOMER COMMENTS</p>
@@ -196,3 +196,4 @@ const CustomerComments = () => {
 };
 
 export default CustomerComments;
+

@@ -54,7 +54,7 @@ const RouteManagement = () => {
   const fetchRoutes = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:8000/api/routes', {
+      const response = await axios.get('http://localhost:8000/api/admin/routes', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -70,7 +70,7 @@ const RouteManagement = () => {
 
   const fetchCities = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/cities', {
+      const response = await axios.get('http://localhost:8000/api/admin/cities', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.data.success) {
@@ -99,9 +99,7 @@ const RouteManagement = () => {
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     // Validations
     if (!formData.departure_id || !formData.destination_id) {
       toast.error('Veuillez sélectionner les villes de départ et d\'arrivée');
@@ -113,23 +111,18 @@ const RouteManagement = () => {
       return;
     }
 
-    if (!validateDistance(formData.distance)) {
-      return;
-    }
-
-    if (!validateDuration(formData.duration)) {
-      return;
-    }
+    if (!validateDistance(formData.distance)) return;
+    if (!validateDuration(formData.duration)) return;
 
     try {
       if (editingRoute) {
-        // Update route
+        // Update route (PUT)
         const response = await axios.put(
-          `http://localhost:8000/api/routes/${editingRoute.id}`,
+          `http://localhost:8000/api/admin/routes/${editingRoute.id}`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        
+
         if (response.data.success) {
           toast.success(response.data.message);
           if (response.data.warning) {
@@ -139,13 +132,13 @@ const RouteManagement = () => {
           closeModal();
         }
       } else {
-        // Create route
+        // Create route (POST)
         const response = await axios.post(
-          'http://localhost:8000/api/routes',
+          'http://localhost:8000/api/admin/routes',
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        
+
         if (response.data.success) {
           toast.success(response.data.message);
           fetchRoutes();
@@ -162,10 +155,10 @@ const RouteManagement = () => {
   const handleEdit = (route: Route) => {
     setEditingRoute(route);
     setFormData({
-      departure_id: route.departure_id.toString(),
-      destination_id: route.destination_id.toString(),
-      distance: route.distance.toString(),
-      duration: route.duration
+      departure_id: route?.departure_id ? String(route.departure_id) : "",
+      destination_id: route?.destination_id ? String(route.destination_id) : "",
+      distance: route?.distance ? String(route.distance) : "",
+      duration: route?.duration ?? ""
     });
     setShowModal(true);
   };
@@ -173,16 +166,14 @@ const RouteManagement = () => {
   const handleDelete = async (route: Route) => {
     const routeName = `${route.departure.city_name} → ${route.destination.city_name}`;
     const confirmed = await confirm(`Êtes-vous sûr de vouloir supprimer le trajet ${routeName} ?`);
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     try {
       const response = await axios.delete(
-        `http://localhost:8000/api/routes/${route.id}`,
+        `http://localhost:8000/api/admin/routes/${route.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       if (response.data.success) {
         toast.success(response.data.message);
         fetchRoutes();
@@ -307,7 +298,7 @@ const RouteManagement = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Ville de départ *
@@ -316,7 +307,6 @@ const RouteManagement = () => {
                   value={formData.departure_id}
                   onChange={(e) => setFormData({ ...formData, departure_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-color2"
-                  required
                 >
                   <option value="">Sélectionner une ville</option>
                   {cities.map((city) => (
@@ -335,7 +325,6 @@ const RouteManagement = () => {
                   value={formData.destination_id}
                   onChange={(e) => setFormData({ ...formData, destination_id: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-color2"
-                  required
                 >
                   <option value="">Sélectionner une ville</option>
                   {cities
@@ -359,7 +348,6 @@ const RouteManagement = () => {
                   onChange={(e) => setFormData({ ...formData, distance: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-color2"
                   placeholder="Ex: 250"
-                  required
                 />
               </div>
 
@@ -374,7 +362,6 @@ const RouteManagement = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-color2"
                   placeholder="Ex: 04:30"
                   pattern="[0-9]{1,2}:[0-5][0-9]"
-                  required
                 />
                 <p className="text-xs text-gray-500 mt-1">Format: heures:minutes (ex: 04:30)</p>
               </div>
@@ -388,13 +375,14 @@ const RouteManagement = () => {
                   {t('admin.routes.cancel')}
                 </button>
                 <button
-                  type="submit"
+                  type="button" // IMPORTANT: évite le GET accidentel
+                  onClick={handleSubmit} // déclenche POST ou PUT
                   className="flex-1 px-4 py-2 bg-color2 text-white rounded-lg hover:bg-color3 transition"
                 >
                   {editingRoute ? 'Enregistrer' : 'Valider'}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}

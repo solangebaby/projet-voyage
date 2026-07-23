@@ -82,7 +82,7 @@ const TarifManagement = () => {
   const fetchTarifs = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get('/tarifs', {
+      const response = await api.get('admin/tariffs', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTarifs(response.data.data);
@@ -97,7 +97,7 @@ const TarifManagement = () => {
   const fetchCities = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get('/cities', {
+      const response = await api.get('admin/cities', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCities(response.data.data);
@@ -166,12 +166,12 @@ const TarifManagement = () => {
       };
 
       if (editingTarif) {
-        await api.put(`/tarifs/${editingTarif.id}`, payload, {
+        await api.put(`admin/tariffs/${editingTarif.id}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success('Tarif mis à jour avec succès');
       } else {
-        await api.post('/tarifs', payload, {
+        await api.post('admin/tariffs', payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         toast.success('Tarif créé avec succès');
@@ -194,7 +194,7 @@ const TarifManagement = () => {
 
     try {
       const token = localStorage.getItem('token');
-      await api.delete(`/tarifs/${id}`, {
+      await api.delete(`admin/tariffs/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success('Tarif supprimé avec succès');

@@ -1,18 +1,20 @@
-type ImageOwnProps<T extends React.ElementType> = {
-    className: string
-    image: string
-    alt: string
-    objectCover?: string
-    as?: T
+import React from 'react';
+
+interface ImageProps {
+  image: string;
+  alt: string;
+  className?: string;
+  as?: 'img' | 'a';
+  href?: string;
 }
 
-type ImageProps<T extends React.ElementType> = ImageOwnProps<T> & Omit<React.ComponentProps<T>, keyof ImageOwnProps<T>>
-
-export const Image = <T extends React.ElementType = 'div'>({ className, image, alt, objectCover, as, ...rest }: ImageProps<T>) => {
-    const Component = as || 'div'
+export const Image = ({ image, alt, className = '', as: Tag = 'img', href }: ImageProps) => {
+  if (Tag === 'a') {
     return (
-        <Component className={className} {...rest}>
-            <img src={image} alt={alt} className={`w-full h-full ${objectCover}`} />
-        </Component>
-    )
-}
+      <a href={href || '/'}>
+        <img src={image} alt={alt} className={className} />
+      </a>
+    );
+  }
+  return <img src={image} alt={alt} className={className} />;
+};

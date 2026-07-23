@@ -14,7 +14,12 @@ class Ticket extends Model
         'ticket_number',
         'ticket_type',
         'qr_code',
-        'status'
+        'status',
+        'downloaded_at'
+    ];
+
+    protected $casts = [
+        'downloaded_at' => 'datetime',
     ];
 
     public function reservation()

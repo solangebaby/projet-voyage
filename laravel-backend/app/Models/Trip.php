@@ -10,6 +10,7 @@ class Trip extends Model
     use HasFactory;
 
     protected $fillable = [
+        'agency_id',
         'bus_id',
         'departure_id',
         'destination_id',
@@ -22,13 +23,21 @@ class Trip extends Model
         'occupied_seats',
         'distance_km',
         'price',
-        'status'
+        'status',
+        'validation_status',
+        'submitted_at',
+        'rejection_reason',
+        'notes',
+         'validated_at',   
+    'validated_by',
     ];
 
     protected $casts = [
         'occupied_seats' => 'array',
         'departure_date' => 'date',
-        'arrival_date' => 'date'
+        'arrival_date'   => 'date',
+        'submitted_at'   => 'datetime',
+         'validated_at'   => 'datetime',
     ];
 
     public function bus()
@@ -54,6 +63,11 @@ class Trip extends Model
     public function arrivalAgency()
     {
         return $this->belongsTo(Agency::class, 'arrival_agency_id');
+    }
+
+    public function agency()
+    {
+        return $this->belongsTo(Agency::class, 'agency_id');
     }
 
     public function reservations()

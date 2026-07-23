@@ -11,7 +11,7 @@ import app from "../../assets/appdownload.png"
 const Footer = () => {
     return (
         <footer className="w-full flex flex-col bg-white">
-            <section className="w-full h-auto grid lg:grid-cols-5 md:grid-cols-3 lg:px-20 md:px-12 px-6 py-16 gap-7 md:gap-4 lg:gap-0">
+            <section className="w-full h-auto grid lg:grid-cols-5 md:grid-cols-3 lg:px-24 md:px-12 px-8 py-16 gap-7 md:gap-4 lg:gap-0">
                 <div className="flex flex-col items-start gap-4">
                     <Image className="w-28" image={logo} alt="KCTRIP" as="a" href="/" />
                     <Text className="text-sm text-color4" as="p">
@@ -97,3 +97,4 @@ const Footer = () => {
 }
 
 export default Footer
+

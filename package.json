@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@phosphor-icons/react": "^2.1.10",
+    "@types/qrcode.react": "^1.0.5",
     "axios": "^1.12.2",
     "framer-motion": "^12.23.24",
     "html2canvas": "^1.4.1",

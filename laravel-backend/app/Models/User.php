@@ -62,4 +62,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function agency()
+    {
+        return $this->hasOne(Agency::class, 'user_id');
+    }
 }

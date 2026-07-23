@@ -1,66 +1,37 @@
-import { InputHTMLAttributes, ReactNode } from 'react';
+import React from 'react';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  leftIcon?: React.ReactNode;
   helperText?: string;
-  leftIcon?: ReactNode;
-  rightIcon?: ReactNode;
-  fullWidth?: boolean;
+  className?: string;
 }
 
-export const Input = ({
-  label,
-  error,
-  helperText,
-  leftIcon,
-  rightIcon,
-  fullWidth = true,
-  className = '',
-  ...props
+export const Input = ({ 
+  label, 
+  error, 
+  leftIcon, 
+  helperText, 
+  className = '', 
+  ...props 
 }: InputProps) => {
-  const baseStyles = 'px-4 py-2.5 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed';
-  const errorStyles = error 
-    ? 'border-danger focus:ring-danger focus:border-danger' 
-    : 'border-gray-300 focus:ring-primary focus:border-primary';
-  const widthClass = fullWidth ? 'w-full' : '';
-  const paddingWithIcon = leftIcon ? 'pl-11' : rightIcon ? 'pr-11' : '';
-  
   return (
-    <div className={`${fullWidth ? 'w-full' : ''}`}>
-      {label && (
-        <label className="block text-sm font-medium text-dark mb-2">
-          {label}
-          {props.required && <span className="text-danger ml-1">*</span>}
-        </label>
-      )}
+    <div className="flex flex-col gap-1 w-full">
+      {label && <label className="text-sm font-semibold text-gray-700">{label}</label>}
       <div className="relative">
         {leftIcon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 flex items-center pointer-events-none">
             {leftIcon}
           </div>
         )}
         <input
-          className={`${baseStyles} ${errorStyles} ${widthClass} ${paddingWithIcon} ${className}`}
+          className={`w-full px-4 py-2.5 ${leftIcon ? 'pl-10' : ''} border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 transition ${error ? 'border-red-400' : 'border-gray-200'} ${className}`}
           {...props}
         />
-        {rightIcon && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-            {rightIcon}
-          </div>
-        )}
       </div>
-      {error && (
-        <p className="mt-1.5 text-sm text-danger flex items-center gap-1">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          {error}
-        </p>
-      )}
-      {helperText && !error && (
-        <p className="mt-1.5 text-sm text-gray-500">{helperText}</p>
-      )}
+      {error && <p className="text-red-500 text-xs">{error}</p>}
+      {helperText && !error && <p className="text-gray-500 text-xs">{helperText}</p>}
     </div>
   );
 };

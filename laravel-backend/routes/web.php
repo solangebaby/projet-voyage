@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Models\Ticket;
+use App\Mail\TicketConfirmation;
+use Illuminate\Support\Facades\Mail;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,4 +17,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+Route::get('/test-mail', function () {
+    $ticket = Ticket::first(); // Prends un ticket existant
+    if (!$ticket) return "Aucun ticket en base de données";
+    
+    try {
+        Mail::to("ton-email-perso@gmail.com")->send(new TicketConfirmation($ticket));
+        return "Email envoyé !";
+    } catch (\Exception $e) {
+        return "Erreur : " . $e->getMessage();
+    }
 });

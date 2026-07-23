@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\TicketConfirmation;
 use App\Services\NotchPayService;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -24,7 +25,7 @@ class PaymentController extends Controller
         if (!$request->has('payment_method') && $request->has('method')) {
             $request->merge(['payment_method' => $request->input('method')]);
         }
-        \Log::info('Payment initiate payload', $request->all());
+        Log::info('Payment initiate payload', $request->all());
 
         $validator = Validator::make($request->all(), [
             'reservation_id' => 'required|exists:reservations,id',
@@ -34,7 +35,7 @@ class PaymentController extends Controller
         ]);
 
         if ($validator->fails()) {
-            \Log::warning('Payment initiate validation failed', $validator->errors()->toArray());
+            Log::warning('Payment initiate validation failed', $validator->errors()->toArray());
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
@@ -126,7 +127,7 @@ class PaymentController extends Controller
             
             // SIMULATION: Refuser les paiements dépassant 50,000 FCFA (simule un solde insuffisant)
             if ($amount > 50000) {
-                \Log::warning("Payment simulation: Amount {$amount} FCFA exceeds threshold. Simulating insufficient balance.");
+                Log::warning("Payment simulation: Amount {$amount} FCFA exceeds threshold. Simulating insufficient balance.");
                 return response()->json([
                     'success' => false,
                     'message' => "Solde insuffisant. Le montant de {$amount} FCFA dépasse votre solde disponible. Veuillez recharger votre compte ou utiliser un autre mode de paiement."
@@ -243,6 +244,24 @@ class PaymentController extends Controller
     }
 
     /**
+     * Get payments for a specific user
+     */
+    public function getUserPayments($userId)
+    {
+        $payments = Payment::with(['reservation.trip.departure', 'reservation.trip.destination'])
+            ->whereHas('reservation', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $payments
+        ]);
+    }
+
+    /**
      * Refund a payment (Admin)
      */
     public function refund($id)
@@ -345,9 +364,9 @@ class PaymentController extends Controller
                 try {
                     $ticket->load(['reservation.trip.bus', 'reservation.trip.departure', 'reservation.trip.destination', 'reservation.payment']);
                     Mail::to($reservation->passenger_email)->send(new TicketConfirmation($ticket));
-                    \Log::info('Ticket confirmation email sent to: ' . $reservation->passenger_email);
+                    Log::info('Ticket confirmation email sent to: ' . $reservation->passenger_email);
                 } catch (\Exception $e) {
-                    \Log::error('Failed to send ticket email: ' . $e->getMessage());
+                    Log::error('Failed to send ticket email: ' . $e->getMessage());
                     // Don't fail the payment if email fails
                 }
 
@@ -374,8 +393,27 @@ class PaymentController extends Controller
      */
     public function webhook(Request $request)
     {
-        // Validate webhook signature (implement based on payment gateway)
-        // For now, basic implementation
+        // Validate NotchPay webhook signature
+        $signature = $request->header('x-notchpay-signature') ?? $request->header('X-NotchPay-Signature') ?? '';
+        $secretKey = config('services.notchpay.secret_key');
+
+        if ($secretKey && $signature) {
+            $payload = $request->getContent();
+            $computedSignature = hash_hmac('sha256', $payload, $secretKey);
+            if (!hash_equals($computedSignature, $signature)) {
+                Log::warning('NotchPay webhook: invalid signature', [
+                    'ip' => $request->ip(),
+                    'signature' => $signature,
+                ]);
+                return response()->json(['success' => false, 'message' => 'Invalid webhook signature'], 401);
+            }
+        } elseif ($secretKey && !$signature) {
+            // In production with a secret key configured, require signature
+            if (app()->environment('production')) {
+                Log::warning('NotchPay webhook: missing signature from IP ' . $request->ip());
+                return response()->json(['success' => false, 'message' => 'Webhook signature required'], 401);
+            }
+        }
 
         try {
             $transactionId = $request->input('transaction_id');
@@ -414,9 +452,9 @@ class PaymentController extends Controller
                         try {
                             $ticket->load(['reservation.trip.bus', 'reservation.trip.departure', 'reservation.trip.destination', 'reservation.payment']);
                             Mail::to($reservation->passenger_email)->send(new TicketConfirmation($ticket));
-                            \Log::info('Ticket confirmation email sent via webhook to: ' . $reservation->passenger_email);
+                            Log::info('Ticket confirmation email sent via webhook to: ' . $reservation->passenger_email);
                         } catch (\Exception $e) {
-                            \Log::error('Failed to send ticket email via webhook: ' . $e->getMessage());
+                            Log::error('Failed to send ticket email via webhook: ' . $e->getMessage());
                         }
                     }
                 });
@@ -436,4 +474,21 @@ class PaymentController extends Controller
             ], 500);
         }
     }
+    public function agencyPayments(Request $request)
+{
+    $agency = $request->user()->agency;
+    
+    if (!$agency) {
+        return response()->json(['error' => 'Agency not found'], 404);
+    }
+
+    $payments = \App\Models\Payment::whereHas('reservation.trip', function($q) use ($agency) {
+            $q->where('agency_id', $agency->id);
+        })
+        ->with(['reservation'])
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return response()->json(['data' => $payments]);
+}
 }

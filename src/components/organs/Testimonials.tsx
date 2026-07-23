@@ -98,7 +98,7 @@ const Testimonials = () => {
     }, [])
 
     return (
-        <section className="w-full h-auto flex flex-col items-start justify-center relative lg:px-24 md:px-10 px-6 mt-12 gap-5">
+        <section className="w-full h-auto flex flex-col items-start justify-center relative lg:px-24 md:px-12 px-8 mt-12 gap-5">
             <main className='w-full grid md:grid-cols-2 lg:gap-0 gap-8 md:gap-5'>
                 {/* Text and Steps Container  */}
                 <div className='w-full flex flex-col gap-6'>

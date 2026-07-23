@@ -17,7 +17,7 @@ class StatisticsController extends Controller
     /**
      * Get dashboard statistics
      */
-    public function getDashboardStats()
+    public function index()
     {
         // Total counts
         $totalTrips = Trip::count();

@@ -13,7 +13,7 @@ const TopDestination = () => {
   const cities = [City1, City2, City3, City4, City5, City6];
 
   return (
-    <section id="top-destinations" className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-20 px-6 my-14">
+    <section id="top-destinations" className="w-full h-auto flex flex-col items-center justify-center relative lg:px-24 md:px-12 px-8 my-14">
       <Text as="p" className="font-light text-base text-color3/80 tracking-widest uppercase">
         {TopDestinationTexts.firstText}
       </Text>
@@ -56,3 +56,4 @@ const TopDestination = () => {
 };
 
 export default TopDestination;
+

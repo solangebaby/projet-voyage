@@ -12,6 +12,6 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        'api/*', // Indispensable pour que ngrok et React puissent envoyer des données
     ];
 }

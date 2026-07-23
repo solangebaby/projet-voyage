@@ -1,14 +1,14 @@
-type TextOwnProps<E extends React.ElementType> = {
-    className: string
-    children?: React.ReactNode
-    as?: E
+import React from 'react';
+
+type TextTag = 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'div' | 'small' | 'q' | 'blockquote' | 'label';
+
+interface TextProps {
+  children: React.ReactNode;
+  className?: string;
+  as?: TextTag;
+  [key: string]: any;
 }
 
-type TextProps<E extends React.ElementType> = TextOwnProps<E> & Omit<React.ComponentProps<E>, keyof TextOwnProps<E>>
-
-export const Text = <E extends React.ElementType = 'div'>({ className, children, as }: TextProps<E>) => {
-    const Component = as || 'div'
-    return (
-        <Component className={className}>{children}</Component>
-    )
-}
+export const Text = ({ children, className = '', as: Tag = 'p', ...rest }: TextProps) => {
+  return <Tag className={className} {...rest}>{children}</Tag>;
+};
